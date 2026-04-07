@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { CompanyType, LocationType, VacancyType } from "@/types/enums";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,3 +45,19 @@ export function formatDate(dateString?: string | null) {
     return "";
   }
 }
+
+const enumToOptions = <T extends Record<string, string>>(e: T) =>
+  Object.values(e).map((v) => ({ label: v, value: v }));
+
+export const WORK_FORMATS = enumToOptions(VacancyType);
+export const COMPANY_TYPES = enumToOptions(CompanyType);
+export const LOCATION_OPTIONS = enumToOptions(LocationType);
+
+export const EXPERIENCE_OPTIONS = [
+  { label: "No experience", value: "0" },
+  { label: "1 year", value: "1" },
+  { label: "2 years", value: "2" },
+  { label: "3 years", value: "3" },
+  { label: "4 years", value: "4" },
+  { label: "5+ years", value: "5" },
+];
