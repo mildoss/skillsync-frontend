@@ -2,6 +2,8 @@ import { VacancyCard } from "@/components/vacancies/VacancyCard";
 import { VacancyFilters } from "@/components/vacancies/VacancyFilters";
 import { Button } from "@/components/ui/button";
 import { getCategories, getDomains, getLanguages, getSkills, getVacancies } from "@/lib/api";
+import { ActiveFiltersChips } from "@/components/ui/filters/ActiveFiltersChips";
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 type VacanciesPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -29,7 +31,8 @@ export default async function VacanciesPage({searchParams}: VacanciesPageProps) 
     <div className="relative container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Search for vacancies</h1>
-        <p className="text-muted-foreground mt-2">Find your dream job among hundreds of offers</p>
+        <p className="text-muted-foreground my-2">Find your dream job among hundreds of offers</p>
+        <ActiveFiltersChips categories={categories} skills={skills} domains={domains} languages={languages}/>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-4">
@@ -55,9 +58,34 @@ export default async function VacanciesPage({searchParams}: VacanciesPageProps) 
       </div>
 
       <div className="pointer-events-none fixed right-0 bottom-6 left-0 z-40 flex justify-center lg:hidden">
-        <Button size="lg" className="pointer-events-auto rounded-full px-8 shadow-2xl">
-          Filters ({searchParams ? Object.keys(searchParams).length : 0})
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size="lg" className="pointer-events-auto cursor-pointer rounded-full px-8 shadow-2xl">
+              Filters ({Object.keys(resolvedSearchParams).filter((k) => k !== "page").length})
+            </Button>
+          </SheetTrigger>
+
+          <SheetContent side="bottom" className="flex h-[85vh] flex-col rounded-t-2xl px-0 pb-0">
+            <SheetHeader className="border-b px-6 py-4 text-left">
+              <SheetTitle>Filters</SheetTitle>
+            </SheetHeader>
+
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              <VacancyFilters
+                categories={categories}
+                skills={skills}
+                domains={domains}
+                languages={languages}
+              />
+            </div>
+
+            <div className="bg-background border-t p-4 pb-8">
+              <SheetClose asChild>
+                <Button className="w-full h-12 text-lg">Show results</Button>
+              </SheetClose>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </div>
   );
