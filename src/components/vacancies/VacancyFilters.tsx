@@ -28,10 +28,21 @@ export const VacancyFilters = ({
   const router = useRouter();
   const pathname = usePathname();
 
-  const [searchValue, setSearchValue] = useState(searchParams.get("search") || "");
+  const currentSearch = searchParams.get("search") || "";
+  const currentSalary = searchParams.get("salaryMin");
+
+  const [searchValue, setSearchValue] = useState(currentSearch);
   const [salaryValue, setSalaryValue] = useState<number[]>(
-    searchParams.get("salaryMin") ? [Number(searchParams.get("salaryMin"))] : [0],
+    currentSalary ? [Number(currentSalary)] : [0],
   );
+
+  useEffect(() => {
+    setSearchValue(currentSearch);
+  }, [currentSearch]);
+
+  useEffect(() => {
+    setSalaryValue(currentSalary ? [Number(currentSalary)] : [0]);
+  }, [currentSalary]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -104,7 +115,9 @@ export const VacancyFilters = ({
           </FilterSection>
         )}
 
-        <FilterSection title={`Minimum Salary: ${salaryValue[0] > 0 ? '$' + salaryValue[0] : 'Any'}`}>
+        <FilterSection
+          title={`Minimum Salary: ${salaryValue[0] > 0 ? "$" + salaryValue[0] : "Any"}`}
+        >
           <Slider
             min={0}
             max={15000}
@@ -148,4 +161,4 @@ export const VacancyFilters = ({
       </div>
     </div>
   );
-};
+};;
