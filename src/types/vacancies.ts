@@ -1,12 +1,9 @@
+import { PaginationMeta } from "@/types/global";
+
 export type VacanciesResponse = {
   data: Vacancy[];
-  meta: {
-    limit: number;
-    page: number;
-    total: number;
-    totalPages: number;
-  }
-}
+  meta: PaginationMeta;
+};
 
 export type Vacancy = {
   id: string;

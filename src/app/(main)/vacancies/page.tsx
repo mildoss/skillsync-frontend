@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getCategories, getDomains, getLanguages, getSkills, getVacancies } from "@/lib/api";
 import { ActiveFiltersChips } from "@/components/ui/filters/ActiveFiltersChips";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Pagination } from "@/components/ui/pagination";
 
 type VacanciesPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -57,7 +58,9 @@ export default async function VacanciesPage({searchParams}: VacanciesPageProps) 
         </div>
       </div>
 
-      <div className="pointer-events-none fixed right-0 bottom-6 left-0 z-40 flex justify-center lg:hidden">
+      <Pagination meta={vacancies.meta} />
+
+      <div className="pointer-events-none fixed right-0 bottom-6 left-0 z-40 flex justify-center lg:hidden mb-15">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="lg" className="pointer-events-auto cursor-pointer rounded-full px-8 shadow-2xl">
