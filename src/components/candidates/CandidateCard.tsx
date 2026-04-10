@@ -1,0 +1,70 @@
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import {  formatExperience } from "@/lib/utils";
+import { ExpandableText } from "@/components/ui/expandable-text";
+import { User } from "@/types/users";
+
+type CandidateCardProps = {
+  candidate: User;
+};
+
+export const CandidateCard = ({ candidate }: CandidateCardProps) => {
+  return (
+    <Link
+      href={`/candidates/${candidate.id}`}
+      className="bg-card hover:border-primary/50 block rounded-lg border p-4 shadow-sm transition-colors sm:p-6"
+    >
+      <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+        <div className="flex gap-3 sm:gap-4">
+          <div className="bg-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white sm:h-12 sm:w-12">
+            {candidate.name[0].toUpperCase()}
+          </div>
+
+          <div className="flex flex-col">
+            <h2 className="text-primary text-lg leading-tight font-semibold sm:text-xl">
+              {candidate.position || "Position not specified"}
+            </h2>
+            <div className="mt-1 flex items-center gap-2">
+              <p className="text-muted-foreground text-sm font-medium">{candidate.name}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="mb-4 flex flex-wrap gap-x-2 gap-y-1 text-xs text-muted-foreground sm:text-sm">
+        {candidate.workFormats && candidate.workFormats.length > 0 && (
+          <span className="font-semibold text-foreground">
+            {candidate.workFormats.join(", ")}
+          </span>
+        )}
+
+        {candidate.employmentTypes && candidate.employmentTypes.length > 0 && (
+          <span>· {candidate.employmentTypes.join(", ")}</span>
+        )}
+
+        {candidate.location && <span>· {candidate.location}</span>}
+        <span>· {formatExperience(candidate.experience?.toString() || null)}</span>
+        {candidate.category && <span>· {candidate.category.name}</span>}
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {candidate.skills.map((skill) => (
+          <Link
+            key={skill.id}
+            href={`/candidates?skills=${skill.id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Badge variant="secondary" className="hover:bg-primary/20 transition-colors">
+              {skill.name}
+            </Badge>
+          </Link>
+        ))}
+      </div>
+
+      <ExpandableText text={candidate.about ?? ""} className="text-sm" />
+    </Link>
+  );
+};
