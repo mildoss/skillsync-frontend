@@ -52,7 +52,10 @@ const enumToOptions = <T extends Record<string, string>>(e: T) =>
 export const WORK_FORMATS = enumToOptions(VacancyType);
 export const COMPANY_TYPES = enumToOptions(CompanyType);
 export const EMPLOYMENT_TYPES = enumToOptions(EmploymentType);
-export const LOCATION_OPTIONS = enumToOptions(LocationType);
+export const LOCATION_OPTIONS = Object.keys(LocationType).map((key) => ({
+  label: LocationType[key as keyof typeof LocationType],
+  value: key, 
+}));
 
 export const EXPERIENCE_OPTIONS = [
   { label: "No experience", value: "0" },
