@@ -58,7 +58,7 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
         {vacancy.skills.map((skill) => (
           <Link
             key={skill.id}
-            href={`/vacancies?skill=${skill.slug}`}
+            href={`/vacancies?skills=${skill.id}`}
             onClick={(e) => e.stopPropagation()}
           >
             <Badge variant="secondary" className="hover:bg-primary/20 transition-colors">
