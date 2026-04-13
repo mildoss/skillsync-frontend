@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 type PageHeaderProps = {
   title: string;
@@ -20,9 +21,11 @@ export const PageHeader = ({
   return (
     <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
       {imageUrl ? (
-        <img
+        <Image
           src={imageUrl}
           alt={title}
+          width={96}
+          height={96}
           className="size-20 shrink-0 rounded-xl object-cover shadow-sm sm:size-24"
         />
       ) : (
