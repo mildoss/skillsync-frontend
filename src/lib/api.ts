@@ -1,4 +1,4 @@
-import { VacanciesResponse } from "@/types/vacancies";
+import { VacanciesResponse, Vacancy } from "@/types/vacancies";
 import { Dictionaries } from "@/types/dictionaries";
 import { UsersResponse } from "@/types/users";
 
@@ -17,6 +17,9 @@ export const getUsers = async (queryParams: URLSearchParams) =>
 
 export const getVacancies = async (queryParams: URLSearchParams) =>
   fetchJson<VacanciesResponse>(`${process.env.BACKEND_URL}/vacancies?${queryParams}`);
+
+export const getVacancy = async (id: string) =>
+  fetchJson<Vacancy>(`${process.env.BACKEND_URL}/vacancies/${id}`);
 
 export const getCategories = async () =>
   fetchJson<Dictionaries[]>(`${process.env.BACKEND_URL}/dictionaries/categories`);
