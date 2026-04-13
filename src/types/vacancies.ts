@@ -32,7 +32,11 @@ export type Vacancy = {
     name: string;
     slug: string;
   }[];
-  languages: string[];
+  languages: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 };
