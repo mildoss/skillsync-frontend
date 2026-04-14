@@ -30,7 +30,11 @@ export type User = {
     name: string;
     slug: string;
   }[];
-  languages: string[] | null;
+  languages: {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
   createdAt: string;
   updatedAt: string;
 }
