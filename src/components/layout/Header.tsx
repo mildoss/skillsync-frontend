@@ -16,6 +16,7 @@ import { Menu } from "lucide-react";
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
   { name: "Candidates", href: "/candidates" },
+  { name: "Companies", href: "/companies" },
 ];
 
 export const Header = () => {
