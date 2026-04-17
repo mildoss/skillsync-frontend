@@ -1,5 +1,4 @@
 import { Employee } from "@/types/companies";
-import Image from "next/image";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
 export const CompanyTeam = ({ employees }: { employees: Employee[] }) => {
