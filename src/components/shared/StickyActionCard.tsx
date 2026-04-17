@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
+import Link from "next/link";
 
 export type MetaItem = {
   icon: ReactNode;
@@ -12,6 +13,7 @@ type StickyActionCardProps = {
   primarySubtext?: string;
   actionButtonLabel: string;
   onActionClick?: () => void;
+  actionHref?: string;
   metaItems?: MetaItem[];
 };
 
@@ -20,6 +22,7 @@ export const StickyActionCard = ({
   primarySubtext,
   actionButtonLabel,
   onActionClick,
+  actionHref,
   metaItems = [],
 }: StickyActionCardProps) => {
   return (
@@ -31,13 +34,21 @@ export const StickyActionCard = ({
         )}
       </div>
 
-      <Button
-        size="lg"
-        className="w-full cursor-pointer text-base font-semibold"
-        onClick={onActionClick}
-      >
-        {actionButtonLabel}
-      </Button>
+      {actionHref ? (
+        <Button size="lg" className="w-full text-base font-semibold" asChild>
+          <Link href={actionHref} target="_blank" rel="noopener noreferrer">
+            {actionButtonLabel}
+          </Link>
+        </Button>
+      ) : (
+        <Button
+          size="lg"
+          className="w-full cursor-pointer text-base font-semibold"
+          onClick={onActionClick}
+        >
+          {actionButtonLabel}
+        </Button>
+      )}
 
       {metaItems.length > 0 && (
         <div className="mt-6 space-y-4 border-t pt-6">
