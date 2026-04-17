@@ -5,6 +5,7 @@ import { Vacancy } from "@/types/vacancies";
 import Link from "next/link";
 import { formatSalary, formatExperience, formatDate } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
+import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
 type VacancyCardProps = {
   vacancy: Vacancy;
@@ -18,9 +19,11 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
     >
       <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div className="flex gap-3 sm:gap-4">
-          <div className="bg-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white sm:h-12 sm:w-12">
-            {vacancy.company.name[0].toUpperCase()}
-          </div>
+          <CustomAvatar
+            imageUrl={vacancy.company.logoUrl}
+            fallbackText={vacancy.company.name}
+            size="sm"
+          />
 
           <div className="flex flex-col">
             <h2 className="text-primary text-lg leading-tight font-semibold sm:text-xl">
@@ -68,7 +71,7 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
         ))}
       </div>
 
-        <ExpandableText text={vacancy.description} className="text-sm" />
+      <ExpandableText text={vacancy.description} className="text-sm" />
     </Link>
   );
 };

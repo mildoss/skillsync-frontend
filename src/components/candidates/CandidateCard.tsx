@@ -5,6 +5,7 @@ import Link from "next/link";
 import {  formatExperience } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { User } from "@/types/users";
+import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
 type CandidateCardProps = {
   candidate: User;
@@ -18,9 +19,7 @@ export const CandidateCard = ({ candidate }: CandidateCardProps) => {
     >
       <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div className="flex gap-3 sm:gap-4">
-          <div className="bg-muted-foreground flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white sm:h-12 sm:w-12">
-            {candidate.name[0].toUpperCase()}
-          </div>
+          <CustomAvatar imageUrl={candidate.avatarUrl} fallbackText={candidate.name} size="sm" />
 
           <div className="flex flex-col">
             <h2 className="text-primary text-lg leading-tight font-semibold sm:text-xl">

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
+import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
 type PageHeaderProps = {
   title: string;
@@ -20,19 +20,7 @@ export const PageHeader = ({
 
   return (
     <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-      {imageUrl ? (
-        <Image
-          src={imageUrl}
-          alt={title}
-          width={96}
-          height={96}
-          className="size-20 shrink-0 rounded-xl object-cover shadow-sm sm:size-24"
-        />
-      ) : (
-        <div className="bg-muted-foreground flex size-20 shrink-0 items-center justify-center rounded-xl text-3xl font-bold text-white shadow-sm sm:size-24 sm:text-4xl">
-          {fallbackLetter.toUpperCase()}
-        </div>
-      )}
+      <CustomAvatar imageUrl={imageUrl} fallbackText={fallbackLetter} size="lg" />
 
       <div className="flex flex-col pt-1">
         <h1 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>

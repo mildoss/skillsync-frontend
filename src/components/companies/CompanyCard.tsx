@@ -3,8 +3,8 @@
 import { Companies } from "@/types/companies";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 import { Briefcase, Users } from "lucide-react";
+import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
 export const CompanyCard = ({company}: {company: Companies}) => {
   const router = useRouter();
@@ -15,19 +15,7 @@ export const CompanyCard = ({company}: {company: Companies}) => {
       className="bg-card hover:border-primary/50 flex cursor-pointer flex-col rounded-xl border p-6 shadow-sm transition-colors"
     >
       <div className="flex items-start gap-4">
-        {company.logoUrl ? (
-          <Image
-            src={company.logoUrl}
-            alt={company.name}
-            width={64}
-            height={64}
-            className="size-16 shrink-0 rounded-lg object-cover shadow-sm"
-          />
-        ) : (
-          <div className="bg-muted-foreground flex size-16 shrink-0 items-center justify-center rounded-lg text-2xl font-bold text-white shadow-sm">
-            {company.name[0].toUpperCase()}
-          </div>
-        )}
+        <CustomAvatar imageUrl={company.logoUrl} fallbackText={company.name} size="md" />
 
         <div className="flex flex-col">
           <h2 className="text-primary line-clamp-1 text-lg leading-tight font-bold">
@@ -39,7 +27,7 @@ export const CompanyCard = ({company}: {company: Companies}) => {
         </div>
       </div>
 
-      <p className="text-muted-foreground mt-4 flex-1 text-sm line-clamp-2">
+      <p className="text-muted-foreground mt-4 line-clamp-2 flex-1 text-sm">
         {company.description || "No description provided."}
       </p>
 
