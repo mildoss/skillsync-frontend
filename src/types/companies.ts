@@ -1,4 +1,5 @@
 import { PaginationMeta } from "@/types/global";
+import { Vacancy } from "@/types/vacancies";
 
 export type CompaniesResponse = {
   data: Companies[];
@@ -16,4 +17,17 @@ export type Companies = {
     vacancies: number;
     employees: number;
   }
+}
+
+export type Employee = {
+  id: string;
+  name: string;
+  position: string | null;
+  avatarUrl: string | null;
+};
+
+export type CompanyDetail = Companies & {
+  vacancies: Vacancy[];
+  employees: Employee[];
+  websiteUrl: string | null;
 }

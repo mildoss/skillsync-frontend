@@ -1,7 +1,7 @@
 import { VacanciesResponse, Vacancy } from "@/types/vacancies";
 import { Dictionaries } from "@/types/dictionaries";
 import { User, UsersResponse } from "@/types/users";
-import { CompaniesResponse } from "@/types/companies";
+import { CompaniesResponse, CompanyDetail } from "@/types/companies";
 
 const fetchJson = async <T>(url: string): Promise<T> => {
   const res = await fetch(url);
@@ -27,6 +27,9 @@ export const getVacancy = async (id: string) =>
 
 export const getCompanies = async (queryParams: URLSearchParams) =>
   fetchJson<CompaniesResponse>(`${process.env.BACKEND_URL}/companies?${queryParams}`);
+
+export const getCompany = async (idOrSlug: string) =>
+  fetchJson<CompanyDetail>(`${process.env.BACKEND_URL}/companies/${idOrSlug}`);
 
 export const getCategories = async () =>
   fetchJson<Dictionaries[]>(`${process.env.BACKEND_URL}/dictionaries/categories`);
