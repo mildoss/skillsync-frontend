@@ -33,7 +33,7 @@ export default async function VacancyPage({ params }: VacancyPageProps) {
         badges={[vacancy.category?.name, vacancy.location, vacancy.type]}
       />
 
-      <div className="mt-10 grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="flex flex-col gap-8 lg:col-span-2">
           <section className="bg-card rounded-xl border p-6 shadow-sm sm:p-8">
             <h2 className="mb-4 text-xl font-bold tracking-tight">Job Description</h2>
