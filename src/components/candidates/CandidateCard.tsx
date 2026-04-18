@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import {  formatExperience } from "@/lib/utils";
+import { formatEnum, formatExperience } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
@@ -36,15 +36,15 @@ export const CandidateCard = ({ candidate }: CandidateCardProps) => {
       <div className="mb-4 flex flex-wrap gap-x-2 gap-y-1 text-xs text-muted-foreground sm:text-sm">
         {candidate.workFormats && candidate.workFormats.length > 0 && (
           <span className="font-semibold text-foreground">
-            {candidate.workFormats.join(", ")}
+           {candidate.workFormats.map(formatEnum).join(", ")}
           </span>
         )}
 
         {candidate.employmentTypes && candidate.employmentTypes.length > 0 && (
-          <span>· {candidate.employmentTypes.join(", ")}</span>
+          <span>· {candidate.employmentTypes.map(formatEnum).join(", ")}</span>
         )}
 
-        {candidate.location && <span>· {candidate.location}</span>}
+        {candidate.location && <span>· {formatEnum(candidate.location)}</span>}
         <span>· {formatExperience(candidate.experience?.toString() || null)}</span>
         {candidate.category && <span>· {candidate.category.name}</span>}
       </div>

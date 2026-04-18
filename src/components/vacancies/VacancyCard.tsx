@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Vacancy } from "@/types/vacancies";
 import Link from "next/link";
-import { formatSalary, formatExperience, formatDate } from "@/lib/utils";
+import { formatSalary, formatExperience, formatDate, formatEnum } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 
@@ -51,8 +51,8 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
       </div>
 
       <div className="text-muted-foreground mb-4 flex flex-wrap gap-x-2 gap-y-1 text-xs sm:text-sm">
-        <span className="text-foreground font-semibold">{vacancy.type}</span>
-        {vacancy.location && <span>· {vacancy.location}</span>}
+        <span className="text-foreground font-semibold">{formatEnum(vacancy.type)}</span>
+        {vacancy.location && <span>· {formatEnum(vacancy.location)}</span>}
         <span>· {formatExperience(vacancy.experience)}</span>
         {vacancy.category && <span>· {vacancy.category.name}</span>}
       </div>

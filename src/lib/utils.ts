@@ -46,8 +46,14 @@ export function formatDate(dateString?: string | null) {
   }
 }
 
+export function formatEnum(value: string | null | undefined): string {
+  if (!value) return "";
+  const text = value.replace(/_/g, ' ');
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}
+
 const enumToOptions = <T extends Record<string, string>>(e: T) =>
-  Object.values(e).map((v) => ({ label: v, value: v }));
+  Object.values(e).map((v) => ({ label: formatEnum(v), value: v }));
 
 export const WORK_FORMATS = enumToOptions(VacancyType);
 export const COMPANY_TYPES = enumToOptions(CompanyType);

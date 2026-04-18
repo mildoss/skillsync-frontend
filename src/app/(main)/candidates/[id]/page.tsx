@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";
 import { TagsSection } from "@/components/shared/TagsSection";
 import { BackButton } from "@/components/shared/BackButton";
-import { formatExperience } from "@/lib/utils";
+import { formatEnum, formatExperience } from "@/lib/utils";
 import { Briefcase, Globe2, MonitorSmartphone } from "lucide-react";
 
 type CandidatePageProps = {
@@ -79,13 +79,13 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
               {
                 icon: <Globe2 className="size-5" />,
                 label: "Location",
-                value: candidate.location || "Not specified",
+                value: formatEnum(candidate.location) || "Not specified",
               },
               {
                 icon: <MonitorSmartphone className="size-5" />,
                 label: "Work format",
                 value: candidate.workFormats?.length > 0
-                  ? candidate.workFormats.join(", ")
+                  ? candidate.workFormats.map(formatEnum).join(", ")
                   : "Not specified",
               },
             ]}

@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";
 import { TagsSection } from "@/components/shared/TagsSection";
 import { BackButton } from "@/components/shared/BackButton";
-import { formatExperience, formatSalary, formatDate } from "@/lib/utils";
+import { formatExperience, formatSalary, formatDate, formatEnum } from "@/lib/utils";
 import { Briefcase, Globe2, Clock, CalendarDays } from "lucide-react";
 
 type VacancyPageProps = {
@@ -65,12 +65,12 @@ export default async function VacancyPage({ params }: VacancyPageProps) {
               {
                 icon: <Globe2 className="size-5" />,
                 label: "Location",
-                value: vacancy.location || "Not specified",
+                value: formatEnum(vacancy.location) || "Not specified",
               },
               {
                 icon: <Clock className="size-5" />,
                 label: "Format",
-                value: vacancy.type,
+                value: formatEnum(vacancy.type),
               },
               {
                 icon: <CalendarDays className="size-5" />,
