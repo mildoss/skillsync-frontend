@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const Hero = () => {
   return (
-    <section className="bg-primary/5 border-b py-36 sm:py-40 min-h-screen">
+    <section className="bg-muted/20 border-b py-36 sm:py-32 min-h-screen">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-foreground">
           Find your <span className="text-primary">dream IT job</span> today
