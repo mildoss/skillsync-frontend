@@ -4,21 +4,20 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useFilter } from "@/hooks/use-filter";
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const CompanySearch = () => {
   const {searchParams, setFilter} = useFilter();
   const currentSearch = searchParams.get("search") || "";
   const [searchValue, setSearchValue] = useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchValue !== currentSearch) {
-        setFilter("search", searchValue || null);
-      }
-    }, 500);
+  const debouncedSearch = useDebounce(searchValue, 500);
 
-    return () => clearTimeout(timer);
-  }, [searchValue, currentSearch, setFilter]);
+  useEffect(() => {
+    if (debouncedSearch !== currentSearch) {
+      setFilter("search", debouncedSearch || null);
+    }
+  }, [debouncedSearch, currentSearch, setFilter]);
 
   return (
     <div className="relative w-full max-w-xl">

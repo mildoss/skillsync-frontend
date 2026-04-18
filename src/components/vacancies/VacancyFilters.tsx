@@ -10,6 +10,7 @@ import { FilterCheckboxGroup } from "@/components/ui/filters/FilterCheckboxGroup
 import { COMPANY_TYPES, EXPERIENCE_OPTIONS, LOCATION_OPTIONS, WORK_FORMATS } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Dictionaries } from "@/types/dictionaries";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type VacancyFiltersProps = {
   categories?: Dictionaries[];
@@ -36,6 +37,8 @@ export const VacancyFilters = ({
     currentSalary ? [Number(currentSalary)] : [0],
   );
 
+  const debouncedSearch = useDebounce(searchValue, 500);
+
   useEffect(() => {
     setSearchValue(currentSearch);
   }, [currentSearch]);
@@ -45,29 +48,10 @@ export const VacancyFilters = ({
   }, [currentSalary]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      let hasChanges = false;
-
-      const updateParam = (key: string, value: string) => {
-        const current = params.get(key) || "";
-        if (current !== value) {
-          if (value) params.set(key, value);
-          else params.delete(key);
-          hasChanges = true;
-        }
-      };
-
-      updateParam("search", searchValue);
-
-      if (hasChanges) {
-        params.delete("page");
-        router.push(`${pathname}?${params.toString()}`, { scroll: false });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchValue, pathname, router, searchParams]);
+    if (debouncedSearch !== currentSearch) {
+      setFilter("search", debouncedSearch || null);
+    }
+  }, [debouncedSearch, currentSearch, setFilter]);
 
   const handleReset = () => {
     setSearchValue("");
@@ -161,4 +145,4 @@ export const VacancyFilters = ({
       </div>
     </div>
   );
-};;
+};
