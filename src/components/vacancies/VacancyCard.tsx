@@ -6,12 +6,15 @@ import Link from "next/link";
 import { formatSalary, formatExperience, formatDate, formatEnum } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
+import { useRouter } from "next/navigation";
 
 type VacancyCardProps = {
   vacancy: Vacancy;
 };
 
 export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
+  const router = useRouter();
+
   return (
     <Link
       href={`/vacancies/${vacancy.id}`}
@@ -59,15 +62,18 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
 
       <div className="mb-4 flex flex-wrap gap-2">
         {vacancy.skills.map((skill) => (
-          <Link
+          <span
             key={skill.id}
-            href={`/vacancies?skills=${skill.id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault(); // Запрещаем переход по большой ссылке карточки
+              e.stopPropagation();
+              router.push(`/vacancies?skills=${skill.id}`);
+            }}
           >
             <Badge variant="secondary" className="hover:bg-primary/20 transition-colors">
               {skill.name}
             </Badge>
-          </Link>
+          </span>
         ))}
       </div>
 

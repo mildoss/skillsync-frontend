@@ -6,12 +6,14 @@ import { formatEnum, formatExperience } from "@/lib/utils";
 import { ExpandableText } from "@/components/ui/expandable-text";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
+import { useRouter } from "next/navigation";
 
 type CandidateCardProps = {
   candidate: User;
 };
 
 export const CandidateCard = ({ candidate }: CandidateCardProps) => {
+  const router = useRouter();
   return (
     <Link
       href={`/candidates/${candidate.id}`}
@@ -51,15 +53,18 @@ export const CandidateCard = ({ candidate }: CandidateCardProps) => {
 
       <div className="mb-4 flex flex-wrap gap-2">
         {candidate.skills.map((skill) => (
-          <Link
+          <span
             key={skill.id}
-            href={`/candidates?skills=${skill.id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              router.push(`/vacancies?skills=${skill.id}`);
+            }}
           >
             <Badge variant="secondary" className="hover:bg-primary/20 transition-colors">
               {skill.name}
             </Badge>
-          </Link>
+          </span>
         ))}
       </div>
 
