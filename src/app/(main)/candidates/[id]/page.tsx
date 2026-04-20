@@ -73,7 +73,7 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
                 icon: <Briefcase className="size-5" />,
                 label: "Employment",
                 value: candidate.employmentTypes?.length > 0
-                  ? candidate.employmentTypes.join(", ")
+                  ? candidate.employmentTypes.map(formatEnum).join(", ")
                   : "Not specified",
               },
               {
