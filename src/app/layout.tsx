@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -26,7 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={cn("antialiased", inter.variable)}>
       <body className="bg-background text-foreground flex min-h-screen flex-col font-sans">
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -15,6 +15,7 @@ import { LogOut, Menu, UserIcon } from "lucide-react";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { logoutAction } from "@/actions/auth";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
@@ -48,6 +49,7 @@ export const Header = ({user}: {user: User | null}) => {
         </nav>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <div className="flex items-center gap-4">
@@ -103,9 +105,7 @@ export const Header = ({user}: {user: User | null}) => {
                   <CustomAvatar imageUrl={user.avatarUrl} fallbackText={user.name} size="md" />
                   <div className="flex flex-col">
                     <span className="font-bold">{user.name}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {user.position || "User"}
-                    </span>
+                    <span className="text-muted-foreground text-xs">{user.position || "User"}</span>
                   </div>
                 </div>
               )}
