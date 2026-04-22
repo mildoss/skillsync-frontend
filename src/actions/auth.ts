@@ -54,7 +54,7 @@ export async function registerAction(values: RegisterInput) {
     console.log(error);
     return { error: "Server error" };
   }
-    redirect("/");
+  redirect("/");
 }
 
 export async function loginAction(values: LoginInput) {
@@ -77,5 +77,14 @@ export async function loginAction(values: LoginInput) {
     console.log(error);
     return { error: "Server error" };
   }
-    redirect("/");
+  redirect("/");
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("access-token");
+  cookieStore.delete("refresh-token");
+
+  redirect("/");
 }
