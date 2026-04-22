@@ -39,3 +39,18 @@ export const getLanguages = async () =>
   fetchJson<Dictionaries[]>(`${process.env.BACKEND_URL}/dictionaries/languages`);
 export const getDomains = async () =>
   fetchJson<Dictionaries[]>(`${process.env.BACKEND_URL}/dictionaries/domains`);
+
+export const getMe = async (token: string): Promise<User | null> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
