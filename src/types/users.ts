@@ -8,6 +8,10 @@ export type UsersResponse = {
 export type User = {
   id: string;
   name: string;
+  email: string;
+  role: "APPLICANT" | "EMPLOYER";
+  companyId: string | null;
+  companyRole: "OWNER" | "RECRUITER" | "VIEWER" | null;
   about: string | null;
   avatarUrl: string | null;
   position: string | null;
@@ -37,4 +41,4 @@ export type User = {
   }[];
   createdAt: string;
   updatedAt: string;
-}
+};
