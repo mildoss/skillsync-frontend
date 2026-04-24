@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { CreateCompanyInput } from "@/lib/validation/company";
+import { revalidatePath } from "next/cache";
 
 const getAuthHeaders = async () => {
   const cookieStore = await cookies();
@@ -31,3 +32,42 @@ export async function createCompanyAction(data: CreateCompanyInput) {
   }
 }
 
+export async function joinCompanyAction(companyId: string) {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/${companyId}/join`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      if (res.status === 409) {
+        return { success: true, alreadySent: true };
+      }
+      return { error: errorData.message || "Failed to send request" };
+    }
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}
+
+export async function searchCompaniesAction(query: string) {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies?search=${query}&limit=5`, {
+      method: "GET",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      return { error: "Failed to search companies" };
+    }
+
+    const result = await res.json();
+
+    return { data: result.data };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}

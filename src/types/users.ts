@@ -19,6 +19,7 @@ export type User = {
   workFormats: string[];
   employmentTypes: string[];
   location: string | null;
+  pendingCompanyIds?: string[];
   category: {
     id: string;
     name: string;

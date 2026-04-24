@@ -16,8 +16,8 @@ export type Companies = {
   _count: {
     vacancies: number;
     employees: number;
-  }
-}
+  };
+};
 
 export type Employee = {
   id: string;
@@ -30,4 +30,18 @@ export type CompanyDetail = Companies & {
   vacancies: Vacancy[];
   employees: Employee[];
   websiteUrl: string | null;
-}
+};
+
+export type CompanyJoinRequest = {
+  id: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  companyId: string;
+  userId: string;
+  createdAt: string;
+  company: {
+    id: string;
+    name: string;
+    logoUrl: string | null;
+    companyType: string;
+  };
+};
