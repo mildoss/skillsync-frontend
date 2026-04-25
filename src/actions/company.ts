@@ -102,3 +102,23 @@ export async function searchCompaniesAction(query: string) {
     return { error: "Server connection failed" };
   }
 }
+
+export async function updateCompanyAction(id: string, data: CreateCompanyInput) {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/${id}`, {
+      method: "PATCH",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: errorData.message || "Failed to update company" };
+    }
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}

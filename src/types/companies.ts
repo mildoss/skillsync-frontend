@@ -6,13 +6,15 @@ export type CompaniesResponse = {
   meta: PaginationMeta;
 };
 
+export type CompanyType = "PRODUCT" | "OUTSOURCE" | "OUTSTAFF" | "STARTUP" | "AGENCY";
+
 export type Companies = {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   logoUrl: string | null;
-  companyType: string;
+  companyType: CompanyType;
   _count: {
     vacancies: number;
     employees: number;
