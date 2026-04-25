@@ -31,7 +31,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
         <main className="bg-muted/20 flex-1 p-4 md:p-8">
           <MobileSidebar user={user} />
-          <div className="max-w-5xl">{children}</div>
+          <div className="mx-auto max-w-5xl">{children}</div>
         </main>
       </div>
     </div>

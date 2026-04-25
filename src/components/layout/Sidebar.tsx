@@ -21,7 +21,7 @@ export const Sidebar = ({ user }: { user: User }) => {
   ];
 
   if (user.role === "EMPLOYER" && user.companyRole === "OWNER") {
-    employerLinks.push({ name: "Team Requests", href: "/team-requests", icon: Users });
+    employerLinks.push({ name: "My team", href: "/team", icon: Users });
   }
 
   const links = user.role === "APPLICANT" ? applicantLinks : employerLinks;
