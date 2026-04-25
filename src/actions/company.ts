@@ -53,6 +53,37 @@ export async function joinCompanyAction(companyId: string) {
   }
 }
 
+export async function getMyRequestsAction() {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/requests/me`, {
+      method: "GET",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) return { error: "Failed to fetch requests" };
+
+    const data = await res.json();
+    return { data };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}
+
+export async function cancelJoinRequestAction(requestId: string) {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/requests/${requestId}`, {
+      method: "DELETE",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) return { error: "Failed to cancel request" };
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}
+
 export async function searchCompaniesAction(query: string) {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/companies?search=${query}&limit=5`, {
