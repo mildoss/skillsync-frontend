@@ -47,3 +47,17 @@ export type CompanyJoinRequest = {
     companyType: string;
   };
 };
+
+export type TeamRequest = {
+  id: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  companyId: string;
+  userId: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string | null;
+  };
+};
