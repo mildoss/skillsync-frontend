@@ -185,3 +185,22 @@ export async function updateCompanyAction(id: string, data: CreateCompanyInput) 
     return { error: "Server connection failed" };
   }
 }
+
+export async function deleteCompanyAction(companyId: string) {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/${companyId}`, {
+      method: "DELETE",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: errorData.message || "Failed to delete company" };
+    }
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}
