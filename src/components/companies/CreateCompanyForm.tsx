@@ -56,7 +56,7 @@ export const CreateCompanyForm = () => {
         <textarea
           {...register("description")}
           placeholder="Tell us about your company..."
-          className="border-input bg-background focus-visible:ring-ring flex min-h-25 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0"
+          className="border-input bg-transparent focus-visible:ring-ring flex min-h-25 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0"
         />
         {errors.description && (
           <p className="text-destructive text-xs">{errors.description.message}</p>
@@ -68,7 +68,7 @@ export const CreateCompanyForm = () => {
           <label className="text-sm font-medium">Company Type *</label>
           <select
             {...register("companyType")}
-            className="border-input bg-background focus-visible:ring-ring flex h-11 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-input bg-transparent focus-visible:ring-ring flex h-11 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {COMPANY_TYPES.map((type) => (
               <option key={type.value} value={type.value}>
