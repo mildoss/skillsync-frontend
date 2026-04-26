@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { CreateCompanyInput, createCompanySchema } from "@/lib/validation/company";
@@ -9,9 +9,9 @@ import { createCompanyAction } from "@/actions/company";
 import { COMPANY_TYPES } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const CreateCompanyForm = () => {
-  const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -31,14 +31,13 @@ export const CreateCompanyForm = () => {
   });
 
   const onSubmit = (data: CreateCompanyInput) => {
-    setServerError(null);
-
     startTransition(async () => {
       const result = await createCompanyAction(data);
 
       if (result?.error) {
-        setServerError(result.error);
+        toast.error(result.error);
       } else {
+        toast.success("Company created successfully!");
         router.refresh();
       }
     });
@@ -46,12 +45,6 @@ export const CreateCompanyForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {serverError && (
-        <div className="bg-destructive/15 text-destructive rounded-lg p-3 text-sm font-medium">
-          {serverError}
-        </div>
-      )}
-
       <div className="space-y-1">
         <label className="text-sm font-medium">Company Name *</label>
         <Input placeholder="e.g. Google, EPAM" {...register("name")} className="h-11" />

@@ -9,6 +9,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { User } from "@/types/users";
 import { JoinCompanyCard } from "@/components/companies/JoinCompanyCard";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const JoinCompanyForm = ({ user }: { user: User }) => {
   const router = useRouter();
@@ -16,7 +17,6 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
   const debouncedQuery = useDebounce(query, 500);
   const [results, setResults] = useState<Companies[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [sentRequests, setSentRequests] = useState<Set<string>>(
     new Set(user.pendingCompanyIds || []),
   );
@@ -27,11 +27,10 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
     if (!debouncedQuery.trim()) return;
 
     startSearch(async () => {
-      setError(null);
-
       const res = await searchCompaniesAction(debouncedQuery);
+
       if (res.error) {
-        setError(res.error);
+        toast.error(res.error);
       } else {
         setResults(res.data || []);
         setHasSearched(true);
@@ -40,12 +39,12 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
   }, [debouncedQuery]);
 
   const handleJoin = (companyId: string) => {
-    setError(null);
     startJoining(async () => {
       const res = await joinCompanyAction(companyId);
       if (res.error) {
-        setError(res.error);
+        toast.error(res.error);
       } else {
+        toast.success("Join request sent!");
         setSentRequests((prev) => new Set(prev).add(companyId));
         router.refresh();
       }
@@ -54,11 +53,6 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="bg-destructive/15 text-destructive rounded-lg p-3 text-sm font-medium">
-          {error}
-        </div>
-      )}
 
       <div className="relative flex-1">
         <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -73,7 +67,6 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
             if (!val.trim()) {
               setResults([]);
               setHasSearched(false);
-              setError(null);
             }
           }}
         />

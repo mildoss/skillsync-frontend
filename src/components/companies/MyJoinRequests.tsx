@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, XCircle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const MyJoinRequests = () => {
   const [requests, setRequests] = useState<CompanyJoinRequest[]>([]);
@@ -20,8 +21,8 @@ export const MyJoinRequests = () => {
       try {
         const res = await getMyRequestsAction();
         if (res.data) setRequests(res.data);
-      } catch (e) {
-        console.error(e);
+      } catch {
+        toast.error("Failed to load requests");
       } finally {
         setIsLoading(false);
       }
@@ -30,8 +31,14 @@ export const MyJoinRequests = () => {
 
   const handleCancel = async (id: string) => {
     setRequests((prev) => prev.filter((r) => r.id !== id));
-    await cancelJoinRequestAction(id);
-    router.refresh();
+    const res = await cancelJoinRequestAction(id);
+
+    if (res.error) {
+      toast.error(res.error);
+    } else {
+      toast.success("Join request cancelled");
+      router.refresh();
+    }
   };
 
   if (isLoading) return <div className="py-10 text-center">Loading requests...</div>;

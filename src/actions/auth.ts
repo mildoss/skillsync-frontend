@@ -50,11 +50,10 @@ export async function registerAction(values: RegisterInput) {
     }
 
     await setAuthCookies(data);
-  } catch (error) {
-    console.log(error);
+    return { success: true };
+  } catch {
     return { error: "Server error" };
   }
-  redirect("/");
 }
 
 export async function loginAction(values: LoginInput) {
@@ -73,11 +72,10 @@ export async function loginAction(values: LoginInput) {
     }
 
     await setAuthCookies(data);
-  } catch (error) {
-    console.log(error);
+    return { success: true };
+  } catch {
     return { error: "Server error" };
   }
-  redirect("/");
 }
 
 export async function logoutAction() {

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { removeEmployeeAction } from "@/actions/company";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 type Employee = { id: string; name: string; position: string | null; avatarUrl: string | null };
 
@@ -23,8 +24,14 @@ export const ActiveTeamList = ({
     if (!confirm("Are you sure you want to remove this recruiter?")) return;
 
     startTransition(async () => {
-      await removeEmployeeAction(companyId, employeeId);
-      router.refresh();
+      const res = await removeEmployeeAction(companyId, employeeId);
+
+      if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("Recruiter removed from the team");
+        router.refresh();
+      }
     });
   };
 

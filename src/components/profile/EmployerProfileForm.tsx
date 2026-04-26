@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/types/users";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { UpdateEmployerProfileInput, updateEmployerProfileSchema } from "@/lib/validation/user";
@@ -10,10 +10,9 @@ import { updateUserAction } from "@/actions/user";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const EmployerProfileForm = ({ user }: { user: User }) => {
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -37,15 +36,12 @@ export const EmployerProfileForm = ({ user }: { user: User }) => {
   const position = watch("position");
 
   const onSubmit = (data: UpdateEmployerProfileInput) => {
-    setServerError(null);
-    setIsSuccess(false);
-
     startTransition(async () => {
       const res = await updateUserAction(data);
       if (res.error) {
-        setServerError(res.error);
+        toast.error(res.error);
       } else {
-        setIsSuccess(true);
+        toast.success("Profile updated successfully!");
         router.refresh();
       }
     });
@@ -63,18 +59,6 @@ export const EmployerProfileForm = ({ user }: { user: User }) => {
           <p className="text-muted-foreground font-medium">{position || "Your Position"}</p>
         </div>
       </div>
-
-      {serverError && (
-        <div className="bg-destructive/15 text-destructive rounded-lg p-3 text-sm font-medium">
-          {serverError}
-        </div>
-      )}
-
-      {isSuccess && (
-        <div className="bg-success/15 text-success rounded-lg p-3 text-sm font-medium">
-          Profile updated successfully!
-        </div>
-      )}
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="space-y-1">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginInput, loginSchema } from "@/lib/validation/auth";
@@ -8,10 +8,12 @@ import { loginAction } from "@/actions/auth";
 import { AuthWrapper } from "@/components/auth/AuthWrapper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const {
     register,
@@ -26,13 +28,14 @@ export default function LoginPage() {
   });
 
   const onSubmit = (data: LoginInput) => {
-    setServerError(null);
-
     startTransition(async () => {
       const result = await loginAction(data);
 
       if (result?.error) {
-        setServerError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success("Welcome back!");
+        router.push("/");
       }
     });
   };
@@ -46,12 +49,6 @@ export default function LoginPage() {
       footerLinkText="Sign up"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
-        {serverError && (
-          <div className="bg-destructive/15 text-destructive rounded-lg p-3 text-sm font-medium">
-            {serverError}
-          </div>
-        )}
 
         <div className="space-y-1">
           <Input placeholder="Email" type="email" {...register("email")} className="h-11" />

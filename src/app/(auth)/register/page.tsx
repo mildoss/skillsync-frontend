@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, RegisterInput } from "@/lib/validation/auth";
@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Briefcase, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const {
     register,
@@ -35,13 +37,14 @@ export default function RegisterPage() {
   const selectedRole = watch("role");
 
   const onSubmit = (data: RegisterInput) => {
-    setServerError(null);
-
     startTransition(async () => {
       const result = await registerAction(data);
 
       if (result?.error) {
-        setServerError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success("Account created!");
+        router.push("/");
       }
     });
   };
@@ -83,12 +86,6 @@ export default function RegisterPage() {
             <p className="text-sm font-semibold">I&apos;m hiring</p>
           </div>
         </div>
-
-        {serverError && (
-          <div className="bg-destructive/15 text-destructive rounded-lg p-3 text-sm font-medium">
-            {serverError}
-          </div>
-        )}
 
         <div className="space-y-1">
           <Input placeholder="Username" {...register("username")} className="h-11" />

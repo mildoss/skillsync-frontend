@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateCompanyInput, createCompanySchema } from "@/lib/validation/company";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { CompanyDetail } from "@/types/companies";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { Info } from "lucide-react";
+import { toast } from "sonner";
 
 export const UpdateCompanyForm = ({
   company,
@@ -19,8 +20,6 @@ export const UpdateCompanyForm = ({
   company: CompanyDetail;
   isReadOnly: boolean;
 }) => {
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -44,15 +43,14 @@ export const UpdateCompanyForm = ({
 
   const onSubmit = (data: CreateCompanyInput) => {
     if (isReadOnly) return;
-    setServerError(null);
-    setIsSuccess(false);
 
     startTransition(async () => {
       const result = await updateCompanyAction(company.id, data);
+
       if (result?.error) {
-        setServerError(result.error);
+        toast.error(result.error);
       } else {
-        setIsSuccess(true);
+        toast.success("Company details updated!");
       }
     });
   };
@@ -132,10 +130,6 @@ export const UpdateCompanyForm = ({
 
       {!isReadOnly && (
         <div className="flex flex-col gap-4 border-t pt-6">
-          {serverError && <p className="text-destructive text-sm font-medium">{serverError}</p>}
-          {isSuccess && (
-            <p className="text-success text-sm font-medium">Company details updated!</p>
-          )}
           <div className="flex justify-end">
             <Button type="submit" size="lg" disabled={isPending}>
               {isPending ? "Saving..." : "Save Changes"}

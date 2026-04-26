@@ -7,6 +7,7 @@ import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const TeamRequestsList = ({
   initialRequests,
@@ -23,8 +24,13 @@ export const TeamRequestsList = ({
     setRequests((prev) => prev.filter((r) => r.id !== requestId));
 
     startTransition(async () => {
-      await handleJoinRequestAction(companyId, requestId, status);
-      router.refresh();
+      const res = await handleJoinRequestAction(companyId, requestId, status);
+      if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.success(status === "APPROVED" ? "Recruiter approved!" : "Request rejected");
+        router.refresh();
+      }
     });
   };
 
