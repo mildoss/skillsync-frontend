@@ -2,6 +2,7 @@ import { VacanciesResponse, Vacancy } from "@/types/vacancies";
 import { Dictionaries } from "@/types/dictionaries";
 import { User, UsersResponse } from "@/types/users";
 import { CompaniesResponse, CompanyDetail } from "@/types/companies";
+import { getAuthHeaders } from "@/lib/server-utils";
 
 const fetchJson = async <T>(url: string): Promise<T> => {
   const res = await fetch(url);
@@ -40,12 +41,10 @@ export const getLanguages = async () =>
 export const getDomains = async () =>
   fetchJson<Dictionaries[]>(`${process.env.BACKEND_URL}/dictionaries/domains`);
 
-export const getMe = async (token: string): Promise<User | null> => {
+export const getMe = async (): Promise<User | null> => {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: await getAuthHeaders(),
       cache: "no-store",
     });
     if (!res.ok) return null;

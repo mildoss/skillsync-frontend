@@ -1,17 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { UpdateEmployerProfileInput } from "@/lib/validation/user";
-
-const getAuthHeaders = async () => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
+import { getAuthHeaders } from "@/lib/server-utils";
 
 export async function updateUserAction(data: UpdateEmployerProfileInput) {
   try {

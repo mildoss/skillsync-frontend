@@ -1,13 +1,10 @@
 import { getMe, getCompany } from "@/lib/api";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { UpdateCompanyForm } from "@/components/companies/UpdateCompanyForm";
 
 export default async function MyCompanyPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-  const user = await getMe(token!);
+  const user = await getMe();
 
   if (!user) redirect("/login");
 

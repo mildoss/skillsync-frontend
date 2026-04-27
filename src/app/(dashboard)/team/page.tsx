@@ -1,5 +1,4 @@
 import { getMe, getCompany } from "@/lib/api";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { getCompanyRequestsAction } from "@/actions/company";
@@ -8,9 +7,7 @@ import { ActiveTeamList } from "@/components/companies/ActiveTeamList";
 import { TeamRequest } from "@/types/companies";
 
 export default async function TeamPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-  const user = await getMe(token!);
+  const user = await getMe();
 
   if (!user) redirect("/login");
 

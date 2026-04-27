@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getMe } from "@/lib/api";
 import { Header } from "@/components/layout/Header";
@@ -7,14 +6,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileSidebar } from "@/components/layout/MobileSidebar";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-
-  if (!token) {
-    redirect("/login");
-  }
-
-  const user = await getMe(token);
+  const user = await getMe();
 
   if (!user) {
     redirect("/login");

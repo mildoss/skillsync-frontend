@@ -9,7 +9,7 @@ export default async function MainLayout({ children }: { children: ReactNode }) 
 
   let user = null;
   if (token) {
-    user = await getMe(token);
+    user = await getMe();
   }
 
   return (

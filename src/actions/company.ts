@@ -1,17 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { CreateCompanyInput } from "@/lib/validation/company";
 import { revalidatePath } from "next/cache";
-
-const getAuthHeaders = async () => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
+import { getAuthHeaders } from "@/lib/server-utils";
 
 export async function createCompanyAction(data: CreateCompanyInput) {
   try {

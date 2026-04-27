@@ -1,13 +1,10 @@
 import { getMe } from "@/lib/api";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { EmployerProfileForm } from "@/components/profile/EmployerProfileForm";
 import { ApplicantProfileForm } from "@/components/profile/ApplicantProfileForm";
 
 export default async function ProfilePage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access-token")?.value;
-  const user = await getMe(token!);
+  const user = await getMe();
 
   if (!user) redirect("/login");
 
