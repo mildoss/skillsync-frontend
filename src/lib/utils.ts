@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CompanyType, EmploymentType, LocationType, VacancyType } from "@/types/enums";
+import { Dictionaries } from "@/types/dictionaries";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,7 +42,7 @@ export function formatDate(dateString?: string | null) {
       day: "numeric",
       year: "numeric",
     }).format(date);
-  } catch (error) {
+  } catch {
     return "";
   }
 }
@@ -69,6 +70,9 @@ export function buildQueryParams(
 
   return queryParams;
 }
+
+export const mapToOptions = (items: Dictionaries[]) =>
+  items.map((item) => ({ label: item.name, value: item.id }));
 
 const enumToOptions = <T extends Record<string, string>>(e: T) =>
   Object.values(e).map((v) => ({ label: formatEnum(v), value: v }));

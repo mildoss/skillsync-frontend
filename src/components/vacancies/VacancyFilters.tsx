@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FilterSection } from "@/components/ui/filters/FilterSection";
 import { Input } from "@/components/ui/input";
 import { FilterCheckboxGroup } from "@/components/ui/filters/FilterCheckboxGroup";
-import { COMPANY_TYPES, EXPERIENCE_OPTIONS, LOCATION_OPTIONS, WORK_FORMATS } from "@/lib/utils";
+import { COMPANY_TYPES, EXPERIENCE_OPTIONS, LOCATION_OPTIONS, mapToOptions, WORK_FORMATS } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Dictionaries } from "@/types/dictionaries";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -58,9 +58,6 @@ export const VacancyFilters = ({
     setSalaryValue([0]);
     router.push(pathname);
   };
-
-  const mapToOptions = (items: Dictionaries[]) =>
-    items.map((item) => ({ label: item.name, value: item.id }));
 
   return (
     <div className="bg-card space-y-6 rounded-lg border p-6">
