@@ -5,6 +5,7 @@ import { getCategories, getDomains, getLanguages, getSkills, getVacancies } from
 import { ActiveFiltersChips } from "@/components/ui/filters/ActiveFiltersChips";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Pagination } from "@/components/ui/pagination";
+import { buildQueryParams } from "@/lib/utils";
 
 type VacanciesPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -12,13 +13,7 @@ type VacanciesPageProps = {
 
 export default async function VacanciesPage({searchParams}: VacanciesPageProps) {
   const resolvedSearchParams = await searchParams;
-  const queryParams = new URLSearchParams();
-
-  Object.entries(resolvedSearchParams).forEach(([key, value]) => {
-    if (value) {
-      queryParams.append(key, String(value));
-    }
-  });
+  const queryParams = buildQueryParams(resolvedSearchParams);
 
   const [vacancies, categories, skills, languages, domains] = await Promise.all([
     getVacancies(queryParams),

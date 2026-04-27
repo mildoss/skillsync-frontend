@@ -52,6 +52,24 @@ export function formatEnum(value: string | null | undefined): string {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
+export function buildQueryParams(
+  params: Record<string, string | string[] | undefined>,
+): URLSearchParams {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => queryParams.append(key, v));
+    } else {
+      queryParams.append(key, value);
+    }
+  });
+
+  return queryParams;
+}
+
 const enumToOptions = <T extends Record<string, string>>(e: T) =>
   Object.values(e).map((v) => ({ label: formatEnum(v), value: v }));
 

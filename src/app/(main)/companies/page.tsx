@@ -2,6 +2,7 @@ import { getCompanies } from "@/lib/api";
 import { CompanySearch } from "@/components/companies/CompanySearch";
 import { CompanyCard } from "@/components/companies/CompanyCard";
 import { Pagination } from "@/components/ui/pagination";
+import {buildQueryParams} from "@/lib/utils";
 
 type CompaniesPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -9,13 +10,7 @@ type CompaniesPageProps = {
 
 export default async function CompaniesPage({ searchParams }: CompaniesPageProps) {
   const resolvedSearchParams = await searchParams;
-  const queryParams = new URLSearchParams();
-
-  Object.entries(resolvedSearchParams).forEach(([key, value]) => {
-    if (value) {
-      queryParams.append(key, String(value));
-    }
-  });
+  const queryParams = buildQueryParams(resolvedSearchParams);
 
   const companiesResponse = await getCompanies(queryParams);
 

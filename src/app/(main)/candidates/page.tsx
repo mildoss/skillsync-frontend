@@ -5,6 +5,7 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger 
 import { Pagination } from "@/components/ui/pagination";
 import { CandidateCard } from "@/components/candidates/CandidateCard";
 import { CandidateFilters } from "@/components/candidates/CandidateFilters";
+import { buildQueryParams } from "@/lib/utils";
 
 type CandidatesPageProps = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -12,13 +13,7 @@ type CandidatesPageProps = {
 
 export default async function CandidatesPage({searchParams}: CandidatesPageProps) {
   const resolvedSearchParams = await searchParams;
-  const queryParams = new URLSearchParams();
-
-  Object.entries(resolvedSearchParams).forEach(([key, value]) => {
-    if (value) {
-      queryParams.append(key, String(value));
-    }
-  });
+  const queryParams = buildQueryParams(resolvedSearchParams);
 
   const [candidates, categories, skills, languages] = await Promise.all([
     getUsers(queryParams),
