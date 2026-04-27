@@ -204,3 +204,22 @@ export async function deleteCompanyAction(companyId: string) {
     return { error: "Server connection failed" };
   }
 }
+
+export async function leaveCompanyAction() {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/companies/leave`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: errorData.message || "Failed to leave company" };
+    }
+
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch {
+    return { error: "Server connection failed" };
+  }
+}

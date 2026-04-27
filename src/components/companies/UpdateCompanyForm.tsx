@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateCompanyInput, createCompanySchema } from "@/lib/validation/company";
-import { deleteCompanyAction, updateCompanyAction } from "@/actions/company";
+import { deleteCompanyAction, leaveCompanyAction, updateCompanyAction } from "@/actions/company";
 import { COMPANY_TYPES } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,10 @@ export const UpdateCompanyForm = ({
 }) => {
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
+  const [isLeaving] = useTransition();
 
   const {
     register,
@@ -74,14 +76,38 @@ export const UpdateCompanyForm = ({
     });
   };
 
+  const handleLeave = () => {
+    startTransition(async () => {
+      const res = await leaveCompanyAction();
+      if (res.error) {
+        toast.error(res.error);
+      } else {
+        toast.success("You have left the company");
+        router.refresh();
+      }
+      setIsLeaveModalOpen(false);
+    });
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {isReadOnly && (
-          <div
-            className="bg-muted/50 text-muted-foreground flex items-center gap-3 rounded-lg border p-4 text-sm font-medium">
-            <Info className="size-4 shrink-0" />
-            You are viewing this company as a Recruiter. Only the Owner can edit these details.
+          <div className="bg-muted/50 text-muted-foreground flex items-center justify-between gap-3 rounded-lg border mt-4 p-4 text-sm font-medium">
+            <div className="flex items-center gap-3">
+              <Info className="size-4 shrink-0" />
+              <span>
+              You are viewing this company as a Recruiter. Only the Owner can edit these details.
+            </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 border-destructive/20 cursor-pointer"
+              onClick={() => setIsLeaveModalOpen(true)}
+            >
+              Leave Company
+            </Button>
           </div>
         )}
 
@@ -105,7 +131,7 @@ export const UpdateCompanyForm = ({
             <select
               {...register("companyType")}
               disabled={isReadOnly}
-              className="border-input bg-transparent focus-visible:ring-ring flex h-11 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 disabled:opacity-70"
+              className="border-input focus-visible:ring-ring flex h-11 w-full rounded-lg border bg-transparent px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 disabled:opacity-70"
             >
               {COMPANY_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -145,7 +171,7 @@ export const UpdateCompanyForm = ({
             {...register("description")}
             disabled={isReadOnly}
             placeholder="Tell us about your company..."
-            className="border-input bg-transparent focus-visible:ring-ring flex min-h-32 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 disabled:opacity-70"
+            className="border-input focus-visible:ring-ring flex min-h-32 w-full rounded-lg border bg-transparent px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 disabled:opacity-70"
           />
         </div>
 
@@ -161,10 +187,11 @@ export const UpdateCompanyForm = ({
       </form>
 
       {!isReadOnly && (
-        <div className="mt-12 rounded-xl border border-destructive/20 bg-destructive/5 p-6">
-          <h3 className="text-lg font-bold text-destructive">Danger Zone</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Once you delete your company, there is no going back. All vacancies and team connections will be permanently removed.
+        <div className="border-destructive/20 bg-destructive/5 mt-12 rounded-xl border p-6">
+          <h3 className="text-destructive text-lg font-bold">Danger Zone</h3>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Once you delete your company, there is no going back. All vacancies and team connections
+            will be permanently removed.
           </p>
           <Button
             type="button"
@@ -184,6 +211,15 @@ export const UpdateCompanyForm = ({
         onCancelAction={() => setIsDeleteModalOpen(false)}
         onConfirmAction={handleDeleteCompany}
         isPending={isDeleting}
+      />
+
+      <ConfirmModal
+        isOpen={isLeaveModalOpen}
+        title="Leave Company"
+        description={`Are you sure you want to leave ${company.name}? You will lose access to all team features.`}
+        onCancelAction={() => setIsLeaveModalOpen(false)}
+        onConfirmAction={handleLeave}
+        isPending={isLeaving}
       />
     </>
   );
