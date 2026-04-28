@@ -52,4 +52,17 @@ export const getMe = async (): Promise<User | null> => {
   } catch {
     return null;
   }
-}
+};
+
+export const getMyVacancies = async (): Promise<Vacancy[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/vacancies/my`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
