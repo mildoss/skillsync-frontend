@@ -5,7 +5,7 @@ export const config = {
 };
 
 const authRoutes = ["/login", "/register"];
-const privateRoutes = ["/profile"];
+const privateRoutes = ["/profile", "/applications", "/company", "/my-vacancies", "/team"];
 
 function isTokenExpiring(token: string) {
   try {
