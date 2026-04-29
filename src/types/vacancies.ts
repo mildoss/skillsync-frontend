@@ -20,6 +20,7 @@ export type Vacancy = {
     slug: string;
   };
   company: {
+    id: string;
     name: string;
     logoUrl: string | null;
     companyType: string;
