@@ -25,9 +25,9 @@ export const UpdateCompanyForm = ({
   const router = useRouter();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [isDeleting, startDeleting] = useTransition();
-  const [isLeaving] = useTransition();
+  const [isLeaving, startLeaving] = useTransition();
 
   const {
     register,
@@ -48,18 +48,18 @@ export const UpdateCompanyForm = ({
   const logoUrl = watch("logoUrl");
   const name = watch("name");
 
-  const onSubmit = (data: CreateCompanyInput) => {
+  const onSubmit = async (data: CreateCompanyInput) => {
     if (isReadOnly) return;
 
-    startTransition(async () => {
-      const result = await updateCompanyAction(company.id, data);
+    setIsPending(true);
+    const result = await updateCompanyAction(company.id, data);
 
-      if (result?.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Company details updated!");
-      }
-    });
+    if (result?.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Company details updated!");
+    }
+    setIsPending(false);
   };
 
   const handleDeleteCompany = () => {
@@ -77,7 +77,7 @@ export const UpdateCompanyForm = ({
   };
 
   const handleLeave = () => {
-    startTransition(async () => {
+    startLeaving(async () => {
       const res = await leaveCompanyAction();
       if (res.error) {
         toast.error(res.error);

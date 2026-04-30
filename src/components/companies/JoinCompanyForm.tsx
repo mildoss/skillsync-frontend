@@ -20,22 +20,30 @@ export const JoinCompanyForm = ({ user }: { user: User }) => {
   const [sentRequests, setSentRequests] = useState<Set<string>>(
     new Set(user.pendingCompanyIds || []),
   );
-  const [isSearching, startSearch] = useTransition();
+  const [isSearching, setIsSearching] = useState(false);
   const [isJoining, startJoining] = useTransition();
 
   useEffect(() => {
     if (!debouncedQuery.trim()) return;
 
-    startSearch(async () => {
-      const res = await searchCompaniesAction(debouncedQuery);
+    const search = async () => {
+      try {
+        setIsSearching(true);
 
-      if (res.error) {
-        toast.error(res.error);
-      } else {
-        setResults(res.data || []);
-        setHasSearched(true);
+        const res = await searchCompaniesAction(debouncedQuery);
+
+        if (res.error) {
+          toast.error(res.error);
+        } else {
+          setResults(res.data || []);
+          setHasSearched(true);
+        }
+      } finally {
+        setIsSearching(false);
       }
-    });
+    };
+
+    void search();
   }, [debouncedQuery]);
 
   const handleJoin = (companyId: string) => {
