@@ -1,12 +1,25 @@
-import { getMe } from "@/lib/api";
+import { getCategories, getLanguages, getMe, getSkills } from "@/lib/api";
 import { redirect } from "next/navigation";
 import { EmployerProfileForm } from "@/components/profile/EmployerProfileForm";
 import { ApplicantProfileForm } from "@/components/profile/ApplicantProfileForm";
+import { Dictionaries } from "@/types/dictionaries";
 
 export default async function ProfilePage() {
   const user = await getMe();
+  let categories: Dictionaries[] = [];
+  let skills: Dictionaries[] = [];
+  let languages: Dictionaries[] = [];
 
   if (!user) redirect("/login");
+
+
+  if (user.role === "APPLICANT") {
+    [categories, skills, languages] = await Promise.all([
+      getCategories(),
+      getSkills(),
+      getLanguages(),
+    ]);
+  }
 
   return (
     <div className="mx-auto max-w-4xl py-6">
@@ -22,7 +35,12 @@ export default async function ProfilePage() {
       {user.role === "EMPLOYER" ? (
         <EmployerProfileForm user={user} />
       ) : (
-        <ApplicantProfileForm user={user} />
+        <ApplicantProfileForm
+          user={user}
+          categories={categories}
+          skills={skills}
+          languages={languages}
+        />
       )}
     </div>
   );
