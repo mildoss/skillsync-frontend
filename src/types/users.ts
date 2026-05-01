@@ -1,4 +1,6 @@
 import { PaginationMeta } from "@/types/global";
+import { EmploymentType, VacancyType } from "@/types/enums";
+import { Dictionaries } from "@/types/dictionaries";
 
 export type UsersResponse = {
   data: User[];
@@ -11,35 +13,26 @@ export type User = {
   email: string;
   role: "APPLICANT" | "EMPLOYER";
   companyId: string | null;
-  companyRole: "OWNER" | "RECRUITER" | "VIEWER" | null;
+  companyRole: "OWNER" | "RECRUITER" | null;
   about: string | null;
   avatarUrl: string | null;
   position: string | null;
   experience: number | null;
-  workFormats: string[];
-  employmentTypes: string[];
+  workFormats: VacancyType[];
+  employmentTypes: EmploymentType[];
   location: string | null;
+  cvUrl?: string | null;
+  categoryId: string | null;
   pendingCompanyIds?: string[];
-  category: {
-    id: string;
-    name: string;
-    slug: string;
-  } | null;
+  category: Dictionaries | null;
   company: {
     name: string;
     logoUrl: string | null;
     companyType: string;
   } | null;
-  skills: {
-    id: string;
-    name: string;
-    slug: string;
-  }[];
-  languages: {
-    id: string;
-    name: string;
-    slug: string;
-  }[];
+  skills: Dictionaries[];
+  languages: Dictionaries[];
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };

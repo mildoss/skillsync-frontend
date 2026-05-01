@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { UpdateEmployerProfileInput } from "@/lib/validation/user";
+import { UpdateApplicantProfileInput, UpdateEmployerProfileInput } from "@/lib/validation/user";
 import { getAuthHeaders } from "@/lib/server-utils";
 
-export async function updateUserAction(data: UpdateEmployerProfileInput) {
+export async function updateUserAction(data: UpdateEmployerProfileInput | UpdateApplicantProfileInput) {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/users/me`, {
       method: "PATCH",
