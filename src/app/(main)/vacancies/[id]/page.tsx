@@ -1,4 +1,4 @@
-import { getVacancy } from "@/lib/api";
+import { getMe, getMyApplications, getVacancy } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";
@@ -6,6 +6,7 @@ import { TagsSection } from "@/components/shared/TagsSection";
 import { BackButton } from "@/components/shared/BackButton";
 import { formatExperience, formatSalary, formatDate, formatEnum } from "@/lib/utils";
 import { Briefcase, Globe2, Clock, CalendarDays } from "lucide-react";
+import { ApplyButton } from "@/components/applications/ApplyButton";
 
 type VacancyPageProps = {
   params: Promise<{ id: string }>;
@@ -14,11 +15,19 @@ type VacancyPageProps = {
 export default async function VacancyPage({ params }: VacancyPageProps) {
   const { id } = await params;
 
-  let vacancy;
-  try {
-    vacancy = await getVacancy(id);
-  } catch {
+  const [vacancy, user] = await Promise.all([
+    getVacancy(id).catch(() => null),
+    getMe().catch(() => null),
+  ]);
+
+  if (!vacancy) {
     notFound();
+  }
+
+  let hasApplied = false;
+  if (user?.role === "APPLICANT") {
+    const myApps = await getMyApplications().catch(() => []);
+    hasApplied = myApps.some((app) => app.vacancyId === vacancy.id);
   }
 
   return (
@@ -55,7 +64,14 @@ export default async function VacancyPage({ params }: VacancyPageProps) {
           <StickyActionCard
             primaryText={formatSalary(vacancy.salaryMin, vacancy.salaryMax, vacancy.currency)}
             primarySubtext="Before taxes"
-            actionButtonLabel="Apply for job"
+            actionNode={
+              <ApplyButton
+                vacancyId={vacancy.id}
+                vacancyTitle={vacancy.title}
+                user={user}
+                hasApplied={hasApplied}
+              />
+            }
             metaItems={[
               {
                 icon: <Briefcase className="size-5" />,

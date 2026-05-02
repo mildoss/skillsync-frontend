@@ -11,9 +11,10 @@ export type MetaItem = {
 type StickyActionCardProps = {
   primaryText: string;
   primarySubtext?: string;
-  actionButtonLabel: string;
+  actionButtonLabel?: string;
   onActionClick?: () => void;
   actionHref?: string;
+  actionNode?: ReactNode;
   metaItems?: MetaItem[];
 };
 
@@ -23,6 +24,7 @@ export const StickyActionCard = ({
   actionButtonLabel,
   onActionClick,
   actionHref,
+  actionNode,
   metaItems = [],
 }: StickyActionCardProps) => {
   return (
@@ -34,7 +36,9 @@ export const StickyActionCard = ({
         )}
       </div>
 
-      {actionHref ? (
+      {actionNode ? (
+        actionNode
+      ) : actionHref ? (
         <Button size="lg" className="w-full text-base font-semibold" asChild>
           <Link href={actionHref} target="_blank" rel="noopener noreferrer">
             {actionButtonLabel}
