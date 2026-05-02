@@ -3,6 +3,7 @@ import { Dictionaries } from "@/types/dictionaries";
 import { User, UsersResponse } from "@/types/users";
 import { CompaniesResponse, CompanyDetail } from "@/types/companies";
 import { getAuthHeaders } from "@/lib/server-utils";
+import { Application } from "@/types/application";
 
 const fetchJson = async <T>(url: string): Promise<T> => {
   const res = await fetch(url);
@@ -54,9 +55,35 @@ export const getMe = async (): Promise<User | null> => {
   }
 };
 
+export const getMyApplications = async (): Promise<Application[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/applications/my`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
 export const getMyVacancies = async (): Promise<Vacancy[]> => {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/vacancies/my`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getVacancyApplications = async (vacancyId: string): Promise<Application[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/applications/vacancy/${vacancyId}`, {
       headers: await getAuthHeaders(),
       cache: "no-store",
     });
