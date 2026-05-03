@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { VacancyCard } from "@/components/vacancies/VacancyCard";
 
 export default async function MyVacanciesPage() {
@@ -34,7 +34,13 @@ export default async function MyVacanciesPage() {
             myVacancies.map((vacancy) => (
               <div key={vacancy.id} className="group relative">
                 <VacancyCard vacancy={vacancy} />
-                <div className="absolute top-4 right-4 flex gap-2">
+                <div className="absolute top-4 sm:top-15 right-4 flex gap-2">
+                  <Button variant="secondary" size="sm" asChild>
+                    <Link href={`/my-vacancies/${vacancy.id}/applications`}>
+                      <Users className="mr-1.5 size-4" /> Candidates
+                    </Link>
+                  </Button>
+
                   <Button variant="secondary" size="sm" asChild>
                     <Link href={`/my-vacancies/${vacancy.id}`}>Edit</Link>
                   </Button>
