@@ -10,7 +10,7 @@ export const ApplicationStatusBadge = ({ status }: { status: ApplicationStatus }
           <Clock className="size-3" /> Pending
         </Badge>
       );
-    case "REVIEWED":
+    case "REVIEWING":
       return (
         <Badge variant="outline" className="border-primary/50 bg-primary/10 text-primary gap-1">
           <Eye className="size-3" /> Reviewed

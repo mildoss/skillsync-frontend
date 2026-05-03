@@ -1,7 +1,7 @@
 import { User } from "./users";
 import { Vacancy } from "./vacancies";
 
-export type ApplicationStatus = "PENDING" | "REVIEWED" | "INVITED" | "REJECTED";
+export type ApplicationStatus = "PENDING" | "REVIEWING" | "INVITED" | "REJECTED";
 
 export type Application = {
   id: string;
