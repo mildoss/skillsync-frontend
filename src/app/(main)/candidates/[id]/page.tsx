@@ -1,4 +1,4 @@
-import { getUser } from "@/lib/api";
+import { getMe, getMyVacancies, getUser } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";
@@ -6,6 +6,8 @@ import { TagsSection } from "@/components/shared/TagsSection";
 import { BackButton } from "@/components/shared/BackButton";
 import { formatEnum, formatExperience } from "@/lib/utils";
 import { Briefcase, Globe2, MonitorSmartphone } from "lucide-react";
+import { Vacancy } from "@/types/vacancies";
+import { InviteButton } from "@/components/applications/InviteButton";
 
 type CandidatePageProps = {
   params: Promise<{ id: string }>;
@@ -14,11 +16,18 @@ type CandidatePageProps = {
 export default async function CandidatePage({ params }: CandidatePageProps) {
   const { id } = await params;
 
-  let candidate;
-  try {
-    candidate = await getUser(id);
-  } catch {
+  const [candidate, user] = await Promise.all([
+    getUser(id).catch(() => null),
+    getMe().catch(() => null),
+  ]);
+
+  if (!candidate) {
     notFound();
+  }
+
+  let myVacancies: Vacancy[] = [];
+  if (user?.role === "EMPLOYER" && user.companyId) {
+    myVacancies = await getMyVacancies().catch(() => []);
   }
 
   return (
@@ -30,20 +39,15 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
         subtitle={candidate.name}
         imageUrl={candidate.avatarUrl}
         fallbackLetter={candidate.name[0]}
-        badges={[
-          candidate.category?.name,
-          candidate.location,
-        ]}
+        badges={[candidate.category?.name, candidate.location]}
       />
 
       <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
-
         <div className="flex flex-col gap-8 lg:col-span-2">
-
           {candidate.about && (
             <section className="bg-card rounded-xl border p-6 shadow-sm sm:p-8">
               <h2 className="mb-4 text-xl font-bold tracking-tight">About candidate</h2>
-              <div className="text-muted-foreground whitespace-pre-wrap text-base leading-relaxed">
+              <div className="text-muted-foreground text-base leading-relaxed whitespace-pre-wrap">
                 {candidate.about}
               </div>
             </section>
@@ -55,10 +59,7 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
 
               <TagsSection title="Skills" tags={candidate.skills} />
 
-              <TagsSection
-                title="Languages"
-                tags={candidate.languages}
-              />
+              <TagsSection title="Languages" tags={candidate.languages} />
             </section>
           )}
         </div>
@@ -68,13 +69,22 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
             primaryText={formatExperience(candidate.experience?.toString() || null)}
             primarySubtext="Total experience"
             actionButtonLabel="Invite to vacancy"
+            actionNode={
+              <InviteButton
+                candidateId={candidate.id}
+                candidateName={candidate.name}
+                user={user}
+                myVacancies={myVacancies}
+              />
+            }
             metaItems={[
               {
                 icon: <Briefcase className="size-5" />,
                 label: "Employment",
-                value: candidate.employmentTypes?.length > 0
-                  ? candidate.employmentTypes.map(formatEnum).join(", ")
-                  : "Not specified",
+                value:
+                  candidate.employmentTypes?.length > 0
+                    ? candidate.employmentTypes.map(formatEnum).join(", ")
+                    : "Not specified",
               },
               {
                 icon: <Globe2 className="size-5" />,
@@ -84,9 +94,10 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
               {
                 icon: <MonitorSmartphone className="size-5" />,
                 label: "Work format",
-                value: candidate.workFormats?.length > 0
-                  ? candidate.workFormats.map(formatEnum).join(", ")
-                  : "Not specified",
+                value:
+                  candidate.workFormats?.length > 0
+                    ? candidate.workFormats.map(formatEnum).join(", ")
+                    : "Not specified",
               },
             ]}
           />
