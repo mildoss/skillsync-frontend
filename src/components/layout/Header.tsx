@@ -10,6 +10,7 @@ import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { logoutAction } from "@/actions/auth";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileHeaderMenu } from "@/components/layout/MobileHeaderMenu";
+import { NotificationBell } from "@/components/layout/NotificationBell";
 
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
@@ -44,6 +45,8 @@ export const Header = ({ user }: { user: User | null }) => {
         </nav>
 
         <div className="flex items-center gap-4">
+          {user && <NotificationBell />}
+
           <ThemeToggle />
 
           <div className="hidden items-center gap-4 md:flex">
