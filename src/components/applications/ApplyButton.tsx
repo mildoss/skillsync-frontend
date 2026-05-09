@@ -58,7 +58,7 @@ export const ApplyButton = ({ vacancyId, vacancyTitle, user, hasApplied }: Apply
 
       <ApplyModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onCloseAction={() => setIsModalOpen(false)}
         vacancyId={vacancyId}
         vacancyTitle={vacancyTitle}
       />
