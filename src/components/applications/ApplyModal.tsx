@@ -6,9 +6,9 @@ import { Send, History, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { applyForVacancyAction } from "@/actions/application";
 import { toast } from "sonner";
-import { generateCoverLetterAction } from "@/actions/ai";
 import { getLatestDraft } from "@/lib/server-api";
-
+import { generateCoverLetterAction } from "@/actions/ai";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 type ApplyModalProps = {
   isOpen: boolean;
@@ -18,33 +18,56 @@ type ApplyModalProps = {
 };
 
 export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: ApplyModalProps) => {
+  const [, setLocalDraft, clearLocalDraft] = useLocalStorage(`draft_${vacancyId}`,"");
   const [coverLetter, setCoverLetter] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [isFetchingDraft, setIsFetchingDraft] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (isOpen) {
       document.body.style.overflow = "hidden";
 
       const fetchDraft = async () => {
-        const res = await getLatestDraft("COVER_LETTER");
+        const saved = window.localStorage.getItem(`draft_${vacancyId}`);
+        const parsed = saved ? JSON.parse(saved) : "";
 
-        if (res.data && res.data.text) {
+        if (parsed) {
+          setCoverLetter(parsed);
+          setIsDraftLoaded(true);
+          return;
+        }
+
+        setIsFetchingDraft(true);
+
+        const res = await getLatestDraft("COVER_LETTER", vacancyId);
+
+        if (!isMounted) return;
+
+        if (res.data?.text) {
           setCoverLetter(res.data.text);
+          setLocalDraft(res.data.text);
           setIsDraftLoaded(true);
         }
+
+        setIsFetchingDraft(false);
       };
 
       void fetchDraft();
+
       return () => {
+        isMounted = false;
         document.body.style.overflow = "unset";
-        setCoverLetter("");
         setIsDraftLoaded(false);
+        setIsFetchingDraft(false);
       };
     }
-  }, [isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, vacancyId]);
 
   if (!isOpen) return null;
 
@@ -56,6 +79,7 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
         toast.error(res.error);
       } else {
         toast.success("Application sent successfully!");
+        clearLocalDraft();
         onCloseAction();
         router.push("/applications");
         router.refresh();
@@ -72,6 +96,7 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
       toast.error(res.error);
     } else if (res.data) {
       setCoverLetter(res.data.text);
+      setLocalDraft(res.data.text);
       setIsDraftLoaded(false);
       toast.success(`Generated! You have ${res.data.remainingCredits} credits left. ✨`);
     }
@@ -111,7 +136,7 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
             size="sm"
             className="shrink-0 gap-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 hover:text-indigo-600"
             onClick={handleGenerateAI}
-            disabled={isGenerating || isPending}
+            disabled={isGenerating || isPending || isFetchingDraft}
           >
             <Sparkles className={isGenerating ? "size-4 animate-pulse" : "size-4"} />
             {isGenerating ? "Thinking..." : "AI Magic"}
@@ -122,18 +147,23 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
           value={coverLetter}
           onChange={(e) => {
             setCoverLetter(e.target.value);
+            setLocalDraft(e.target.value);
             setIsDraftLoaded(false);
           }}
           placeholder="Hello! I've been working with Next.js and NestJS for 3 years..."
           className="border-input focus-visible:ring-ring mb-6 flex min-h-40 w-full rounded-lg border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 disabled:opacity-50"
-          disabled={isPending || isGenerating}
+          disabled={isPending || isGenerating || isFetchingDraft}
         />
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={onCloseAction} disabled={isPending || isGenerating}>
+          <Button
+            variant="outline"
+            onClick={onCloseAction}
+            disabled={isPending || isGenerating || isFetchingDraft}
+          >
             Cancel
           </Button>
-          <Button onClick={handleApply} disabled={isPending || isGenerating}>
+          <Button onClick={handleApply} disabled={isPending || isGenerating || isFetchingDraft}>
             {isPending ? "Sending..." : "Send Application"}
           </Button>
         </div>
