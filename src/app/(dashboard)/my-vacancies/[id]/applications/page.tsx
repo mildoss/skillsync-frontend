@@ -1,4 +1,5 @@
-import { getMe, getVacancy, getVacancyApplications } from "@/lib/api";
+import { getVacancy } from "@/lib/api";
+import { getMe, getVacancyApplications } from "@/lib/server-api";
 import { notFound, redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { ChevronLeft, Users } from "lucide-react";

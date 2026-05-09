@@ -1,4 +1,5 @@
-import { getMe, getCategories, getSkills, getLanguages, getDomains, getVacancy } from "@/lib/api";
+import { getCategories, getSkills, getLanguages, getDomains, getVacancy } from "@/lib/api";
+import { getMe } from "@/lib/server-api";
 import { notFound, redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { VacancyForm } from "@/components/vacancies/VacancyForm";

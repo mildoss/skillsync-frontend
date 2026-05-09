@@ -2,6 +2,61 @@
 
 import { AiDraftResponse, AiGenerationType } from "@/types/ai";
 import { getAuthHeaders } from "@/lib/server-utils";
+import { Application } from "@/types/application";
+import { Vacancy } from "@/types/vacancies";
+import { User } from "@/types/users";
+
+export const getMe = async (): Promise<User | null> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/users/me`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+};
+
+export const getMyApplications = async (): Promise<Application[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/applications/my`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getMyVacancies = async (): Promise<Vacancy[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/vacancies/my`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getVacancyApplications = async (vacancyId: string): Promise<Application[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/applications/vacancy/${vacancyId}`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
 
 export const getLatestDraft = async (type: AiGenerationType) => {
   try {

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Header } from "@/components/layout/Header";
 import { cookies } from "next/headers";
-import { getMe } from "@/lib/api";
+import { getMe } from "@/lib/server-api";
 
 export default async function MainLayout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();

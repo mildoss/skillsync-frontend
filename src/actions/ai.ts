@@ -2,7 +2,8 @@
 
 import { getAuthHeaders } from "@/lib/server-utils";
 import { AiGenerationResponse} from "@/types/ai";
-import { getMe, getVacancy } from "@/lib/api";
+import { getVacancy } from "@/lib/api";
+import { getMe } from "@/lib/server-api";
 
 export async function generateCoverLetterAction(vacancyId: string) {
   try {

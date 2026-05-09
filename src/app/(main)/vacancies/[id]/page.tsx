@@ -1,4 +1,5 @@
-import { getMe, getMyApplications, getVacancy } from "@/lib/api";
+import { getVacancy } from "@/lib/api";
+import { getMe, getMyApplications } from "@/lib/server-api";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";

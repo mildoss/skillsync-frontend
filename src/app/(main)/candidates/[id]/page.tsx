@@ -1,4 +1,5 @@
-import { getMe, getMyVacancies, getUser } from "@/lib/api";
+import { getUser } from "@/lib/api";
+import { getMe, getMyVacancies } from "@/lib/server-api";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StickyActionCard } from "@/components/shared/StickyActionCard";

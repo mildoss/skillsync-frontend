@@ -1,4 +1,4 @@
-import { getMe, getMyApplications } from "@/lib/api";
+import { getMe, getMyApplications } from "@/lib/server-api";
 import { redirect } from "next/navigation";
 import { ApplicantRequestCard } from "@/components/applications/ApplicantRequestCard";
 import { Button } from "@/components/ui/button";

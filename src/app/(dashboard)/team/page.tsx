@@ -1,4 +1,5 @@
-import { getMe, getCompany } from "@/lib/api";
+import { getCompany } from "@/lib/api";
+import { getMe } from "@/lib/server-api";
 import { redirect } from "next/navigation";
 import { RequireCompany } from "@/components/companies/RequireCompany";
 import { getCompanyRequestsAction } from "@/actions/company";

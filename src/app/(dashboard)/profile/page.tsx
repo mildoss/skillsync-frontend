@@ -1,4 +1,5 @@
-import { getCategories, getLanguages, getMe, getSkills } from "@/lib/api";
+import { getCategories, getLanguages, getSkills } from "@/lib/api";
+import { getMe } from "@/lib/server-api";
 import { redirect } from "next/navigation";
 import { EmployerProfileForm } from "@/components/profile/EmployerProfileForm";
 import { ApplicantProfileForm } from "@/components/profile/ApplicantProfileForm";
