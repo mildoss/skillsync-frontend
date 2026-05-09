@@ -5,14 +5,33 @@ import { CompaniesResponse, CompanyDetail } from "@/types/companies";
 import { getAuthHeaders } from "@/lib/server-utils";
 import { Application } from "@/types/application";
 
-const fetchJson = async <T>(url: string): Promise<T> => {
-  const res = await fetch(url);
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-  if (!res.ok) {
-    throw new Error(`Error: ${url}`);
+const fetchJson = async <T>(url: string, retries = 2): Promise<T> => {
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: 30 },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);
+    }
+
+    const data: unknown = await res.json();
+
+    return data as T;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    if (retries > 0) {
+      console.warn(`⚠️ Request failed: ${message}. Retrying in 500ms...`);
+      await delay(500);
+      return fetchJson<T>(url, retries - 1);
+    }
+
+    console.error(`❌ Final fetch error for ${url}:`, message);
+    throw new Error(`Failed after retries: ${message}`);
   }
-
-  return res.json();
 };
 
 export const getUsers = async (queryParams: URLSearchParams) =>
