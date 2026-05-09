@@ -18,6 +18,7 @@ export async function generateCoverLetterAction(vacancyId: string) {
       method: "POST",
       headers,
       body: JSON.stringify({
+        vacancyId,
         vacancyTitle: vacancy.title,
         vacancyDescription: vacancy.description,
         candidateAbout: user.about || "",

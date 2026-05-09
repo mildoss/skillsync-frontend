@@ -58,9 +58,12 @@ export const getVacancyApplications = async (vacancyId: string): Promise<Applica
   }
 };
 
-export const getLatestDraft = async (type: AiGenerationType) => {
+export const getLatestDraft = async (type: AiGenerationType, vacancyId?: string) => {
+  const url = vacancyId
+    ? `${process.env.BACKEND_URL}/ai/draft?type=${type}&vacancyId=${vacancyId}`
+    : `${process.env.BACKEND_URL}/ai/draft?type=${type}`;
   try {
-    const res = await fetch(`${process.env.BACKEND_URL}/ai/draft?type=${type}`, {
+    const res = await fetch(url, {
       headers: await getAuthHeaders(),
       cache: "no-store",
     });
