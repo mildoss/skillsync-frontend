@@ -5,7 +5,7 @@ import { CompaniesResponse, CompanyDetail } from "@/types/companies";
 import { getAuthHeaders } from "@/lib/server-utils";
 import { Application } from "@/types/application";
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 const fetchJson = async <T>(url: string, retries = 2): Promise<T> => {
   try {
@@ -112,3 +112,4 @@ export const getVacancyApplications = async (vacancyId: string): Promise<Applica
     return [];
   }
 };
+
