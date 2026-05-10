@@ -18,7 +18,7 @@ type ApplyModalProps = {
 };
 
 export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: ApplyModalProps) => {
-  const [, setLocalDraft, clearLocalDraft] = useLocalStorage(`draft_${vacancyId}`,"");
+  const [localDraft, setLocalDraft, clearLocalDraft] = useLocalStorage(`draft_${vacancyId}`,"");
   const [coverLetter, setCoverLetter] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -33,16 +33,14 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
       document.body.style.overflow = "hidden";
 
       const fetchDraft = async () => {
-        const saved = window.localStorage.getItem(`draft_${vacancyId}`);
-        const parsed = saved ? JSON.parse(saved) : "";
+        setIsFetchingDraft(true);
 
-        if (parsed) {
-          setCoverLetter(parsed);
+        if (localDraft) {
+          setCoverLetter(localDraft);
           setIsDraftLoaded(true);
+          setIsFetchingDraft(false);
           return;
         }
-
-        setIsFetchingDraft(true);
 
         const res = await getLatestDraft("COVER_LETTER", vacancyId);
 
@@ -56,6 +54,7 @@ export const ApplyModal = ({ isOpen, onCloseAction, vacancyId, vacancyTitle }: A
 
         setIsFetchingDraft(false);
       };
+
 
       void fetchDraft();
 
