@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VacancyData, VacancyFormValues, VacancyInput, vacancySchema } from "@/lib/validation/vacancy";
@@ -13,6 +13,10 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { getLatestDraft } from "@/lib/server-api";
+import { generateVacancyDescriptionAction } from "@/actions/ai";
+import { Sparkles } from "lucide-react";
 
 type VacancyFormProps = {
   initialData?: Vacancy;
@@ -29,15 +33,22 @@ export const VacancyForm = ({
   languages,
   domains,
   }: VacancyFormProps) => {
+  const storageKey = initialData ? `edit_vacancy_${initialData.id}` : "new_vacancy_draft";
+  const [localDescription, setLocalDescription, clearLocalDescription] = useLocalStorage(storageKey, "");
   const [isPending, startTransition] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isFetchingDraft, setIsFetchingDraft] = useState(false);
+  const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
   const router = useRouter();
   const isEditing = !!initialData;
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<VacancyFormValues, unknown, VacancyData>({
     resolver: zodResolver(vacancySchema),
@@ -57,6 +68,68 @@ export const VacancyForm = ({
     },
   });
 
+  const jobTitle = watch("title");
+  const selectedSkills = watch("skills");
+
+  useEffect(() => {
+    let isMounted = true;
+    if (initialData || hasLoadedDraft) return;
+
+    const fetchDraft = async () => {
+      try {
+        setIsFetchingDraft(true);
+
+        if (localDescription) {
+          setValue("description", localDescription);
+          setHasLoadedDraft(true);
+          return;
+        }
+
+        const res = await getLatestDraft("VACANCY");
+
+        if (isMounted && res.data?.text) {
+          setValue("description", res.data.text);
+          setLocalDescription(res.data.text);
+        }
+
+        setHasLoadedDraft(true);
+      } catch (error) {
+        console.error("Draft fetch error", error);
+      } finally {
+        if (isMounted) setIsFetchingDraft(false);
+      }
+    };
+
+    void fetchDraft();
+
+    return () => {
+      isMounted = false;
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData, setValue, storageKey, localDescription]);
+
+  const handleAiGenerate = async () => {
+    if (!jobTitle) {
+      toast.error("Please enter a job title first!");
+      return;
+    }
+
+    const keywordNames = skills.filter((s) => selectedSkills?.includes(s.id)).map((s) => s.name);
+
+    setIsGenerating(true);
+    const res = await generateVacancyDescriptionAction(jobTitle, keywordNames);
+    setIsGenerating(false);
+
+    if (res.error) {
+      toast.error(res.error);
+    } else if (res.data) {
+      setValue("description", res.data.text);
+      setLocalDescription(res.data.text);
+      toast.success(`Generated! Remaining credits: ${res.data.remainingCredits}`);
+    }
+  };
+
   const onSubmit = (data: VacancyInput) => {
     startTransition(async () => {
       const res = isEditing
@@ -67,6 +140,7 @@ export const VacancyForm = ({
         toast.error(res.error);
       } else {
         toast.success(isEditing ? "Vacancy updated!" : "Vacancy created!");
+        clearLocalDescription();
         router.push("/my-vacancies");
         router.refresh();
       }
@@ -82,6 +156,7 @@ export const VacancyForm = ({
         setIsDeleteModalOpen(false);
       } else {
         toast.success("Vacancy deleted");
+        clearLocalDescription();
         router.push("/my-vacancies");
         router.refresh();
       }
@@ -137,11 +212,30 @@ export const VacancyForm = ({
         </div>
 
         <div className="bg-card space-y-4 rounded-xl border p-6 shadow-sm">
-          <h2 className="text-xl font-bold">Description *</h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-xl font-bold">Description *</h2>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="w-fit gap-2 bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 hover:text-indigo-600"
+              onClick={handleAiGenerate}
+              disabled={isGenerating || isPending || isFetchingDraft}
+            >
+              <Sparkles className={isGenerating ? "size-4 animate-spin" : "size-4"} />
+              {isGenerating ? "Generating..." : "AI Magic"}
+            </Button>
+          </div>
+
           <textarea
             {...register("description")}
-            className="border-input focus-visible:ring-ring flex min-h-64 w-full rounded-lg border bg-transparent px-4 py-3 text-sm outline-none focus-visible:ring-2"
-            placeholder="Responsibilities, requirements, benefits..."
+            onChange={(e) => {
+              void register("description").onChange(e);
+              setLocalDescription(e.target.value);
+            }}
+            disabled={isPending || isGenerating || isFetchingDraft}
+            className="border-input focus-visible:ring-ring flex min-h-64 w-full rounded-lg border bg-transparent px-4 py-3 text-sm outline-none focus-visible:ring-2 disabled:opacity-50"
+            placeholder={isFetchingDraft ? "Looking for your latest draft..." : "Responsibilities, requirements, benefits..."}
           />
           {errors.description && <p className="text-destructive text-xs">{errors.description.message}</p>}
         </div>
