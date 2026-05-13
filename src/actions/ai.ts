@@ -5,6 +5,7 @@ import { AiGenerationResponse} from "@/types/ai";
 import { getUser, getVacancy } from "@/lib/api";
 import { getMe } from "@/lib/server-api";
 import { Dictionaries } from "@/types/dictionaries";
+import { revalidatePath } from "next/cache";
 
 export async function generateCoverLetterAction(vacancyId: string) {
   try {
@@ -34,6 +35,7 @@ export async function generateCoverLetterAction(vacancyId: string) {
     }
 
     const data: AiGenerationResponse = await aiRes.json();
+    revalidatePath("/layout");
     return { data };
   } catch {
     return { error: "Server connection failed" };
@@ -57,6 +59,7 @@ export async function generateVacancyDescriptionAction(jobTitle: string, keyword
     }
 
     const data: AiGenerationResponse = await aiRes.json();
+    revalidatePath("/layout");
     return { data };
   } catch {
     return { error: "Server connection failed" };
@@ -88,6 +91,7 @@ export async function evaluateCandidateAction(vacancyId: string, applicantId: st
       return { error: errorData.message || "Failed to analyze" };
     }
 
+    revalidatePath("/layout");
     return { data: await aiRes.json() };
   } catch {
     return { error: "Connection error" };
