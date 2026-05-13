@@ -25,6 +25,7 @@ export type User = {
   categoryId: string | null;
   pendingCompanyIds?: string[];
   category: Dictionaries | null;
+  aiCredits: number;
   company: {
     name: string;
     logoUrl: string | null;

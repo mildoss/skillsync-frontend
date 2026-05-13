@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, UserIcon } from "lucide-react";
+import { Menu, Plus, Sparkles, UserIcon } from "lucide-react";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { logoutAction } from "@/actions/auth";
@@ -45,7 +45,7 @@ export const MobileHeaderMenu = ({ user }: { user: User | null }) => {
           </SheetHeader>
 
           <div
-            className="flex flex-1 flex-col"
+            className="flex flex-1 flex-col px-4"
             onClick={(e) => {
               if ((e.target as HTMLElement).closest("a, button")) {
                 setIsOpen(false);
@@ -53,12 +53,36 @@ export const MobileHeaderMenu = ({ user }: { user: User | null }) => {
             }}
           >
             {user && (
-              <div className="mt-6 flex items-center gap-3 rounded-xl border p-4">
-                <CustomAvatar imageUrl={user.avatarUrl} fallbackText={user.name} size="md" />
-                <div className="flex flex-col">
-                  <span className="font-bold">{user.name}</span>
-                  <span className="text-muted-foreground text-xs">{user.position || "User"}</span>
+              <div className="mt-6 flex flex-col gap-4">
+                <div className="flex items-center gap-3 rounded-xl border p-4">
+                  <CustomAvatar imageUrl={user.avatarUrl} fallbackText={user.name} size="md" />
+                  <div className="flex flex-col">
+                    <span className="font-bold">{user.name}</span>
+                    <span className="text-muted-foreground text-xs">{user.position || "User"}</span>
+                  </div>
                 </div>
+
+                  <Link
+                    href="/pricing"
+                    className="border-primary/20 bg-primary/5 active:bg-primary/10 flex items-center justify-between rounded-xl border p-4 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-full">
+                        <Sparkles className="size-5" />
+                      </div>
+                      <div>
+                        <p className="text-foreground text-lg leading-none font-bold">
+                          {user.aiCredits}
+                        </p>
+                        <p className="text-muted-foreground mt-1 text-[10px] tracking-tight uppercase">
+                          Tokens available
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full shadow-sm">
+                      <Plus className="size-5" />
+                    </div>
+                  </Link>
               </div>
             )}
 

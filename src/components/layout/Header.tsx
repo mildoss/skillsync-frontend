@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Plus, Sparkles } from "lucide-react";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { logoutAction } from "@/actions/auth";
@@ -22,8 +22,7 @@ export const Header = ({ user }: { user: User | null }) => {
   const pathName = usePathname();
 
   return (
-    <header
-      className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+    <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="text-primary flex items-center gap-2 text-xl font-bold">
           SkillSync
@@ -45,7 +44,23 @@ export const Header = ({ user }: { user: User | null }) => {
         </nav>
 
         <div className="flex items-center gap-4">
-          {user && <NotificationBell />}
+          {user && (
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link
+                href="/pricing"
+                title="Top up AI Credits"
+                className="group hidden lg:flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 transition-all hover:border-primary/40 hover:bg-primary/10"
+              >
+                <Sparkles className="size-3.5 text-primary group-hover:animate-pulse" />
+                <span className="text-xs font-bold text-foreground">
+                  {user.aiCredits}
+                </span>
+                <Plus className="size-3 text-muted-foreground transition-transform group-hover:scale-125 group-hover:text-primary" />
+              </Link>
+
+              <NotificationBell />
+            </div>
+          )}
 
           <ThemeToggle />
 
