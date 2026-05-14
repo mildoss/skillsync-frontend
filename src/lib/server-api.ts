@@ -79,3 +79,19 @@ export const getLatestDraft = async (type: AiGenerationType, vacancyId?: string)
     return { data: null, error: "Failed to fetch draft" };
   }
 };
+
+export async function getMyTransactions() {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/payments/history`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+
+    if (!res.ok) return [];
+
+    return await res.json();
+  } catch (error) {
+    console.error("Failed to fetch transactions:", error);
+    return [];
+  }
+}
