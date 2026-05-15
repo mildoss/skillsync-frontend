@@ -11,6 +11,7 @@ import { logoutAction } from "@/actions/auth";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileHeaderMenu } from "@/components/layout/MobileHeaderMenu";
 import { NotificationBell } from "@/components/layout/NotificationBell";
+import { ChatCounter } from "@/components/layout/ChatCounter";
 
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
@@ -18,7 +19,7 @@ const navLinks = [
   { name: "Companies", href: "/companies" },
 ];
 
-export const Header = ({ user }: { user: User | null }) => {
+export const Header = ({ user, unreadCount = 0 }: { user: User | null; unreadCount?: number }) => {
   const pathName = usePathname();
 
   return (
@@ -58,6 +59,7 @@ export const Header = ({ user }: { user: User | null }) => {
                 <Plus className="size-3 text-muted-foreground transition-transform group-hover:scale-125 group-hover:text-primary" />
               </Link>
 
+              <ChatCounter initialCount={unreadCount} />
               <NotificationBell />
             </div>
           )}
