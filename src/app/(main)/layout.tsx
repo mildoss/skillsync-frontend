@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Header } from "@/components/layout/Header";
 import { cookies } from "next/headers";
-import { getMe } from "@/lib/server-api";
+import {getMe, getUnreadChatsCount} from "@/lib/server-api";
 
 export default async function MainLayout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();
@@ -11,10 +11,11 @@ export default async function MainLayout({ children }: { children: ReactNode }) 
   if (token) {
     user = await getMe();
   }
+  const unreadCount = user ? await getUnreadChatsCount() : 0;
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header user={user}/>
+      <Header user={user} unreadCount={unreadCount} />
       <main className="bg-muted/20 flex-1">{children}</main>
     </div>
   );

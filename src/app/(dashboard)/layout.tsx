@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { getMe } from "@/lib/server-api";
+import { getMe, getUnreadChatsCount } from "@/lib/server-api";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileSidebar } from "@/components/layout/MobileSidebar";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const user = await getMe();
+  const unreadCount = user ? await getUnreadChatsCount() : 0;
 
   if (!user) {
     redirect("/login");
@@ -14,7 +15,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header user={user} />
+      <Header user={user} unreadCount={unreadCount}/>
 
       <div className="flex flex-1">
         <aside className="bg-card hidden w-64 border-r md:block">
