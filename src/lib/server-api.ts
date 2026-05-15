@@ -5,6 +5,7 @@ import { getAuthHeaders } from "@/lib/server-utils";
 import { Application } from "@/types/application";
 import { Vacancy } from "@/types/vacancies";
 import { User } from "@/types/users";
+import { Message, ChatRoom } from "@/types/chat";
 
 export const getMe = async (): Promise<User | null> => {
   try {
@@ -80,7 +81,7 @@ export const getLatestDraft = async (type: AiGenerationType, vacancyId?: string)
   }
 };
 
-export async function getMyTransactions() {
+export const getMyTransactions = async () => {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/payments/history`, {
       headers: await getAuthHeaders(),
@@ -94,4 +95,48 @@ export async function getMyTransactions() {
     console.error("Failed to fetch transactions:", error);
     return [];
   }
-}
+};
+
+export const getMyChats = async (): Promise<ChatRoom[]> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/chats`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getChatMessages = async (
+  applicationId: string,
+  cursor?: string,
+): Promise<Message[]> => {
+  try {
+    const url = new URL(`${process.env.BACKEND_URL}/chats/${applicationId}/messages`);
+    if (cursor) url.searchParams.append("cursor", cursor);
+
+    const res = await fetch(url.toString(), { headers: await getAuthHeaders(), cache: "no-store" });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+};
+
+export const getUnreadChatsCount = async (): Promise<number> => {
+  try {
+    const res = await fetch(`${process.env.BACKEND_URL}/chats/unread-count`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+
+    if (!res.ok) return 0;
+    const count = await res.json();
+    return Number(count) || 0;
+  } catch {
+    return 0;
+  }
+};
