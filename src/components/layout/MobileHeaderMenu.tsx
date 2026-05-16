@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, Plus, Sparkles, UserIcon } from "lucide-react";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
-import { logoutAction } from "@/actions/auth";
+import { LogoutButton } from "./LogoutButton";
 
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
@@ -62,27 +62,27 @@ export const MobileHeaderMenu = ({ user }: { user: User | null }) => {
                   </div>
                 </div>
 
-                  <Link
-                    href="/pricing"
-                    className="border-primary/20 bg-primary/5 active:bg-primary/10 flex items-center justify-between rounded-xl border p-4 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-full">
-                        <Sparkles className="size-5" />
-                      </div>
-                      <div>
-                        <p className="text-foreground text-lg leading-none font-bold">
-                          {user.aiCredits}
-                        </p>
-                        <p className="text-muted-foreground mt-1 text-[10px] tracking-tight uppercase">
-                          Tokens available
-                        </p>
-                      </div>
+                <Link
+                  href="/pricing"
+                  className="border-primary/20 bg-primary/5 active:bg-primary/10 flex items-center justify-between rounded-xl border p-4 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-full">
+                      <Sparkles className="size-5" />
                     </div>
-                    <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full shadow-sm">
-                      <Plus className="size-5" />
+                    <div>
+                      <p className="text-foreground text-lg leading-none font-bold">
+                        {user.aiCredits}
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-[10px] tracking-tight uppercase">
+                        Tokens available
+                      </p>
                     </div>
-                  </Link>
+                  </div>
+                  <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full shadow-sm">
+                    <Plus className="size-5" />
+                  </div>
+                </Link>
               </div>
             )}
 
@@ -109,11 +109,7 @@ export const MobileHeaderMenu = ({ user }: { user: User | null }) => {
                       <UserIcon className="mr-2 size-4" /> My Profile
                     </Link>
                   </Button>
-                  <form action={logoutAction} className="w-full">
-                    <Button type="submit" variant="destructive" className="w-full">
-                      Log out
-                    </Button>
-                  </form>
+                  <LogoutButton className="w-full">Log out</LogoutButton>
                 </>
               ) : (
                 <>

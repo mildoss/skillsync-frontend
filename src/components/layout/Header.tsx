@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { LogOut, Plus, Sparkles } from "lucide-react";
 import { User } from "@/types/users";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
-import { logoutAction } from "@/actions/auth";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileHeaderMenu } from "@/components/layout/MobileHeaderMenu";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import { ChatCounter } from "@/components/layout/ChatCounter";
+import { LogoutButton } from "@/components/layout/LogoutButton";
 
 const navLinks = [
   { name: "Vacancies", href: "/vacancies" },
@@ -77,16 +77,12 @@ export const Header = ({ user, unreadCount = 0 }: { user: User | null; unreadCou
                   <span className="text-sm font-semibold">{user.name}</span>
                 </Link>
 
-                <form action={logoutAction}>
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <LogOut className="size-5" />
-                  </Button>
-                </form>
+                <LogoutButton
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-destructive"
+                  icon={<LogOut className="size-5" />}
+                />
               </div>
             ) : (
               <>
