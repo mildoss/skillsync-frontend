@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { User } from "@/types/users";
 import { ChatRoom, Message } from "@/types/chat";
 import { CustomAvatar } from "@/components/shared/CustomAvatar";
@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { getChatMessages } from "@/lib/server-api";
 import { cn, formatChatTime } from "@/lib/utils";
 import { toast } from "sonner";
+import { ChatWindow } from "@/components/chats/ChatWindow";
+import { revalidate } from "@/actions/chat";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type ChatLayoutProps = {
   initialChats: ChatRoom[];
@@ -21,6 +24,14 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [readTrigger, setReadTrigger] = useState(0);
+  const debouncedReadTrigger = useDebounce(readTrigger, 800);
+
+  useEffect(() => {
+    if (debouncedReadTrigger > 0) {
+      void revalidate("/layout");
+    }
+  }, [debouncedReadTrigger]);
 
   const getChatInfo = useCallback(
     (chat: ChatRoom) => {
@@ -68,6 +79,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
       setChatMessages([]);
     } finally {
       setIsLoadingMessages(false);
+      await revalidate("/");
     }
   };
 
@@ -119,7 +131,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
                 key={chat.id}
                 onClick={() => handleOpenChat(chat.id)}
                 className={cn(
-                  "hover:bg-muted/70 focus:ring-1 focus:ring-primary flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all duration-200 group",
+                  "hover:bg-muted/70 focus:ring-1 focus:ring-primary flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-all duration-200 group cursor-pointer",
                   activeChatId === chat.id ? "bg-muted shadow-sm" : "",
                 )}
               >
@@ -210,7 +222,13 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
                   <p className="text-sm text-muted-foreground">Loading messages...</p>
                 </div>
               ) : (
-                <h1>Chat</h1>
+                <ChatWindow
+                  key={activeChat.id}
+                  applicationId={activeChat.id}
+                  currentUser={currentUser}
+                  initialMessages={chatMessages}
+                  onMessagesRead={() => setReadTrigger((prev) => prev + 1)}
+                />
               )}
             </div>
           </div>
