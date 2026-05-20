@@ -8,6 +8,15 @@ export async function getAuthToken() {
   return cookieStore.get("access-token")?.value || "";
 }
 
-export async function revalidate(path: string) {
-  revalidatePath(`${path}`);
+export async function revalidate(
+  path: string | string[],
+  type?: 'page' | 'layout'
+) {
+  if (Array.isArray(path)) {
+    for (const p of path) {
+      revalidatePath(p, type);
+    }
+  } else {
+    revalidatePath(path, type);
+  }
 }

@@ -29,7 +29,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
 
   useEffect(() => {
     if (debouncedReadTrigger > 0) {
-      void revalidate("/layout");
+      void revalidate(["/", "/chats"]);
     }
   }, [debouncedReadTrigger]);
 
@@ -79,7 +79,6 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
       setChatMessages([]);
     } finally {
       setIsLoadingMessages(false);
-      await revalidate("/");
     }
   };
 
