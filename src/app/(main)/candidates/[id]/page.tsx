@@ -6,9 +6,11 @@ import { StickyActionCard } from "@/components/shared/StickyActionCard";
 import { TagsSection } from "@/components/shared/TagsSection";
 import { BackButton } from "@/components/shared/BackButton";
 import { formatEnum, formatExperience } from "@/lib/utils";
-import { Briefcase, Globe2, MonitorSmartphone } from "lucide-react";
+import { Briefcase, FileText, Globe2, MonitorSmartphone } from "lucide-react";
 import { Vacancy } from "@/types/vacancies";
 import { InviteButton } from "@/components/applications/InviteButton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type CandidatePageProps = {
   params: Promise<{ id: string }>;
@@ -32,7 +34,7 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
   }
 
   return (
-    <div className="container relative mx-auto px-4 py-8">
+    <div className="relative container mx-auto px-4 py-8">
       <BackButton fallbackHref="/candidates" label="Back to candidates" />
 
       <PageHeader
@@ -61,6 +63,18 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
               <TagsSection title="Skills" tags={candidate.skills} />
 
               <TagsSection title="Languages" tags={candidate.languages} />
+            </section>
+          )}
+
+          {candidate.cvUrl && (
+            <section className="bg-card rounded-xl border p-6 shadow-sm sm:p-8">
+              <h2 className="mb-4 text-xl font-bold tracking-tight">Resume</h2>
+              <Button variant="outline" asChild>
+                <Link href={candidate.cvUrl} target="_blank" rel="noopener noreferrer">
+                  <FileText className="mr-2 size-4" />
+                  View Candidate CV
+                </Link>
+              </Button>
             </section>
           )}
         </div>
