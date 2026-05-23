@@ -1,27 +1,31 @@
 "use client";
 
 import { User } from "@/types/users";
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { UpdateEmployerProfileInput, updateEmployerProfileSchema } from "@/lib/validation/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserAction } from "@/actions/user";
-import { CustomAvatar } from "@/components/shared/CustomAvatar";
+import { updateUserAction, uploadMediaAction } from "@/actions/user";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/shared/ImageUpload";
+import * as z from "zod";
 
 export const EmployerProfileForm = ({ user }: { user: User }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [hasAvatarChanged, setHasAvatarChanged] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
-  } = useForm<UpdateEmployerProfileInput>({
+  } = useForm<z.input<typeof updateEmployerProfileSchema>, unknown, UpdateEmployerProfileInput>({
     resolver: zodResolver(updateEmployerProfileSchema),
     defaultValues: {
       name: user.name || "",
@@ -37,11 +41,41 @@ export const EmployerProfileForm = ({ user }: { user: User }) => {
 
   const onSubmit = (data: UpdateEmployerProfileInput) => {
     startTransition(async () => {
-      const res = await updateUserAction(data);
+      let finalAvatarUrl = data.avatarUrl;
+
+      if (hasAvatarChanged) {
+        if (selectedFile) {
+          const mediaFormData = new FormData();
+          mediaFormData.append("file", selectedFile);
+
+          const mediaRes = await uploadMediaAction(mediaFormData);
+
+          if (mediaRes.error) {
+            const errorMsg =
+              mediaRes.error === "File too large"
+                ? "The file exceeds the allowed size of 5 MB."
+                : mediaRes.error;
+
+            toast.error(errorMsg);
+            return;
+          }
+
+          finalAvatarUrl = mediaRes.url;
+        } else if (avatarUrl === "") {
+          finalAvatarUrl = null;
+        }
+      }
+
+      const res = await updateUserAction({
+        ...data,
+        avatarUrl: finalAvatarUrl,
+      });
+
       if (res.error) {
         toast.error(res.error);
       } else {
         toast.success("Profile updated successfully!");
+        setHasAvatarChanged(false);
         router.refresh();
       }
     });
@@ -52,8 +86,20 @@ export const EmployerProfileForm = ({ user }: { user: User }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="bg-card space-y-8 rounded-xl border p-6 sm:p-8"
     >
-      <div className="flex items-center gap-6 border-b pb-6">
-        <CustomAvatar imageUrl={avatarUrl} fallbackText={name || "?"} size="lg" />
+      <div className="flex flex-col gap-6 border-b pb-6">
+        <ImageUpload
+          currentImageUrl={avatarUrl}
+          name={name}
+          onFileSelectAction={(file) => {
+            setSelectedFile(file);
+            setHasAvatarChanged(true);
+          }}
+          onRemoveAction={() => {
+            setValue("avatarUrl", "");
+            setHasAvatarChanged(true);
+          }}
+        />
+
         <div>
           <h3 className="text-xl font-bold">{name || "Your Name"}</h3>
           <p className="text-muted-foreground font-medium">{position || "Your Position"}</p>
@@ -79,17 +125,11 @@ export const EmployerProfileForm = ({ user }: { user: User }) => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium">Avatar URL</label>
-        <Input placeholder="https://..." {...register("avatarUrl")} className="h-11" />
-        {errors.avatarUrl && <p className="text-destructive text-xs">{errors.avatarUrl.message}</p>}
-      </div>
-
-      <div className="space-y-1">
         <label className="text-sm font-medium">About Me</label>
         <textarea
           {...register("about")}
           placeholder="Tell candidates a little bit about yourself..."
-          className="border-input bg-transparent focus-visible:ring-ring flex min-h-24 w-full rounded-lg border px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0"
+          className="border-input focus-visible:ring-ring flex min-h-24 w-full rounded-lg border bg-transparent px-3 py-2 text-sm transition-colors outline-none focus-visible:ring-3 focus-visible:ring-offset-0"
         />
         {errors.about && <p className="text-destructive text-xs">{errors.about.message}</p>}
       </div>

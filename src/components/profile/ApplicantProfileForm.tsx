@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -9,7 +9,7 @@ import {
   UpdateApplicantProfileInput,
   updateApplicantProfileSchema,
 } from "@/lib/validation/user";
-import { updateUserAction } from "@/actions/user";
+import { updateUserAction, uploadMediaAction } from "@/actions/user";
 import { Dictionaries } from "@/types/dictionaries";
 import { User } from "@/types/users";
 import { EXPERIENCE_OPTIONS, LOCATION_OPTIONS, WORK_FORMATS, EMPLOYMENT_TYPES } from "@/lib/utils";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CustomAvatar } from "@/components/shared/CustomAvatar";
+import { ImageUpload } from "@/components/shared/ImageUpload";
 
 type ApplicantProfileFormProps = {
   user: User;
@@ -34,11 +34,14 @@ export const ApplicantProfileForm = ({
 }: ApplicantProfileFormProps) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [hasAvatarChanged, setHasAvatarChanged] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ApplicantProfileFormValues, unknown, ApplicantProfileData>({
     resolver: zodResolver(updateApplicantProfileSchema),
@@ -65,11 +68,47 @@ export const ApplicantProfileForm = ({
 
   const onSubmit = (data: UpdateApplicantProfileInput) => {
     startTransition(async () => {
-      const res = await updateUserAction(data);
-      if (res.error) {
-        toast.error(res.error);
+      let finalAvatarUrl = data.avatarUrl;
+
+      if (hasAvatarChanged) {
+        if (selectedFile) {
+          const mediaFormData = new FormData();
+          mediaFormData.append("file", selectedFile);
+
+          const mediaRes = await uploadMediaAction(mediaFormData);
+
+          if (mediaRes.error) {
+            const errorMsg =
+              mediaRes.error === "File too large"
+                ? "The file exceeds the allowed size of 5 MB."
+                : mediaRes.error;
+
+            toast.error(errorMsg);
+            return;
+          }
+
+          finalAvatarUrl = mediaRes.url;
+        }
+
+        else if (avatarUrl === "") {
+          finalAvatarUrl = null;
+        }
+      }
+
+      else {
+        finalAvatarUrl = data.avatarUrl;
+      }
+
+      const profileRes = await updateUserAction({
+        ...data,
+        avatarUrl: finalAvatarUrl,
+      });
+
+      if (profileRes.error) {
+        toast.error(profileRes.error);
       } else {
         toast.success("Profile updated successfully!");
+        setHasAvatarChanged(false);
         router.refresh();
       }
     });
@@ -81,11 +120,7 @@ export const ApplicantProfileForm = ({
         <div className="bg-card space-y-4 rounded-xl border p-6 shadow-sm sm:p-8">
           <h2 className="text-xl font-bold">Visibility settings</h2>
           <label className="flex cursor-pointer items-center gap-3 text-sm">
-            <input
-              type="checkbox"
-              {...register("isActive")}
-              className="accent-primary size-5"
-            />
+            <input type="checkbox" {...register("isActive")} className="accent-primary size-5" />
             <div>
               <p className="font-medium">Active and looking for a job</p>
               <p className="text-muted-foreground text-xs">
@@ -95,8 +130,20 @@ export const ApplicantProfileForm = ({
           </label>
         </div>
 
-        <div className="flex items-center gap-6 border-b pb-6">
-          <CustomAvatar imageUrl={avatarUrl} fallbackText={name || "?"} size="lg" />
+        <div className="flex flex-col gap-6 border-b pb-6">
+          <ImageUpload
+            currentImageUrl={avatarUrl}
+            name={name}
+            onFileSelectAction={(file) => {
+              setSelectedFile(file);
+              setHasAvatarChanged(true);
+            }}
+            onRemoveAction={() => {
+              setValue("avatarUrl", "");
+              setHasAvatarChanged(true);
+            }}
+          />
+
           <div>
             <h3 className="text-xl font-bold">{name || "Your Name"}</h3>
             <p className="text-muted-foreground font-medium">{position || "Your Profession"}</p>
@@ -108,14 +155,6 @@ export const ApplicantProfileForm = ({
             <label className="text-sm font-medium">Full Name *</label>
             <Input placeholder="John Doe" {...register("name")} className="h-11" />
             {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Avatar URL</label>
-            <Input placeholder="https://..." {...register("avatarUrl")} className="h-11" />
-            {errors.avatarUrl && (
-              <p className="text-destructive text-xs">{errors.avatarUrl.message}</p>
-            )}
           </div>
         </div>
       </div>
@@ -185,7 +224,6 @@ export const ApplicantProfileForm = ({
           </div>
         </div>
       </div>
-
 
       <div className="bg-card space-y-6 rounded-xl border p-6 shadow-sm">
         <h2 className="text-xl font-bold">About & Resume</h2>
