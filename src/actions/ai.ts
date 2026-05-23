@@ -78,6 +78,7 @@ export async function evaluateCandidateAction(vacancyId: string, applicantId: st
       headers,
       body: JSON.stringify({
         applicationId,
+        vacancyId,
         vacancyTitle: vacancy.title,
         vacancyDescription: vacancy.description,
         candidateAbout: applicant.about || "",
