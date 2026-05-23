@@ -23,3 +23,27 @@ export async function updateUserAction(data: UpdateEmployerProfileInput | Update
     return { error: "Server connection failed" };
   }
 }
+
+export async function uploadMediaAction(formData: FormData) {
+  try {
+    const authHeaders = await getAuthHeaders();
+
+    const { ["Content-Type"]: _, ...headers } = authHeaders;
+
+    const res = await fetch(`${process.env.BACKEND_URL}/media/upload-avatar`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: errorData.message || "Error uploading file" };
+    }
+
+    const data = await res.json();
+    return { url: data.url };
+  } catch {
+    return { error: "Upload error" };
+  }
+}

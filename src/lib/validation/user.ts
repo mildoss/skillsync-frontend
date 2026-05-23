@@ -1,11 +1,14 @@
 import * as z from "zod";
 import { EmploymentType, VacancyType } from "@/types/enums";
 
-const urlField = z
+const nullableUrlField = z
   .string()
-  .trim()
-  .transform((val) => (val === "" ? undefined : val))
+  .nullable()
   .optional()
+  .transform((val) => {
+    if (val === "" || val === undefined) return null;
+    return val;
+  })
   .refine((val) => !val || /^https?:\/\/.+/.test(val), "Must be a valid URL");
 
 const emptyToUndefined = z
@@ -28,7 +31,7 @@ export const updateEmployerProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   position: z.string().optional(),
   about: z.string().optional(),
-  avatarUrl: urlField,
+  avatarUrl: nullableUrlField,
 });
 
 export const updateApplicantProfileSchema = z.object({
@@ -42,8 +45,8 @@ export const updateApplicantProfileSchema = z.object({
   languages: z.array(z.string()).default([]),
   workFormats: z.array(z.enum(VacancyType)).default([]),
   employmentTypes: z.array(z.enum(EmploymentType)).default([]),
-  avatarUrl: urlField,
-  cvUrl: urlField,
+  avatarUrl: nullableUrlField,
+  cvUrl: nullableUrlField,
   isActive: z.boolean().default(true),
 });
 
