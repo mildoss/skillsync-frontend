@@ -177,6 +177,31 @@ export async function updateCompanyAction(id: string, data: CreateCompanyInput) 
   }
 }
 
+export async function uploadCompanyLogoAction(formData: FormData) {
+  try {
+    const authHeaders = await getAuthHeaders();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { ["Content-Type"]: _, ...headers } = authHeaders;
+
+    const res = await fetch(`${process.env.BACKEND_URL}/media/upload-company-logo`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: errorData.message || "Error uploading logo" };
+    }
+
+    const data = await res.json();
+    return { url: data.url };
+  } catch {
+    return { error: "Upload error" };
+  }
+}
+
 export async function deleteCompanyAction(companyId: string) {
   try {
     const res = await fetch(`${process.env.BACKEND_URL}/companies/${companyId}`, {

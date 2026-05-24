@@ -4,7 +4,12 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateCompanyInput, createCompanySchema } from "@/lib/validation/company";
-import { deleteCompanyAction, leaveCompanyAction, updateCompanyAction } from "@/actions/company";
+import {
+  deleteCompanyAction,
+  leaveCompanyAction,
+  updateCompanyAction,
+  uploadCompanyLogoAction,
+} from "@/actions/company";
 import { COMPANY_TYPES } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,12 +18,14 @@ import { CustomAvatar } from "@/components/shared/CustomAvatar";
 import { Info } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import {ConfirmModal} from "@/components/ui/confirm-modal";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { ImageUpload } from "@/components/shared/ImageUpload";
+import * as z from "zod";
 
 export const UpdateCompanyForm = ({
   company,
   isReadOnly,
-  }: {
+}: {
   company: CompanyDetail;
   isReadOnly: boolean;
 }) => {
@@ -29,12 +36,16 @@ export const UpdateCompanyForm = ({
   const [isDeleting, startDeleting] = useTransition();
   const [isLeaving, startLeaving] = useTransition();
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [hasLogoChanged, setHasLogoChanged] = useState(false);
+
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
-  } = useForm<CreateCompanyInput>({
+  } = useForm<z.input<typeof createCompanySchema>, unknown, CreateCompanyInput>({
     resolver: zodResolver(createCompanySchema),
     defaultValues: {
       name: company.name || "",
@@ -52,12 +63,44 @@ export const UpdateCompanyForm = ({
     if (isReadOnly) return;
 
     setIsPending(true);
-    const result = await updateCompanyAction(company.id, data);
+
+    let finalLogoUrl = data.logoUrl;
+
+    if (hasLogoChanged) {
+      if (selectedFile) {
+        const mediaFormData = new FormData();
+        mediaFormData.append("file", selectedFile);
+
+        const mediaRes = await uploadCompanyLogoAction(mediaFormData);
+
+        if (mediaRes.error) {
+          const errorMsg =
+            mediaRes.error === "File too large"
+              ? "The file exceeds the allowed size of 5 MB."
+              : mediaRes.error;
+
+          toast.error(errorMsg);
+          setIsPending(false);
+          return;
+        }
+
+        finalLogoUrl = mediaRes.url;
+      } else if (logoUrl === "") {
+        finalLogoUrl = null;
+      }
+    }
+
+    const result = await updateCompanyAction(company.id, {
+      ...data,
+      logoUrl: finalLogoUrl,
+    });
 
     if (result?.error) {
       toast.error(result.error);
     } else {
       toast.success("Company details updated!");
+      setHasLogoChanged(false);
+      router.refresh();
     }
     setIsPending(false);
   };
@@ -93,17 +136,18 @@ export const UpdateCompanyForm = ({
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {isReadOnly && (
-          <div className="bg-muted/50 text-muted-foreground flex items-center justify-between gap-3 rounded-lg border mt-4 p-4 text-sm font-medium">
+          <div className="bg-muted/50 text-muted-foreground mt-4 flex flex-col items-start justify-between gap-3 rounded-lg border p-4 text-sm font-medium sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
               <Info className="size-4 shrink-0" />
               <span>
-              You are viewing this company as a Recruiter. Only the Owner can edit these details.
-            </span>
+                You are viewing this company as a Recruiter. Only the Owner can edit these details.
+              </span>
             </div>
             <Button
               variant="outline"
               size="sm"
-              className="text-destructive hover:bg-destructive/10 border-destructive/20 cursor-pointer"
+              type="button"
+              className="text-destructive hover:bg-destructive/10 border-destructive/20 mt-2 w-full cursor-pointer sm:mt-0 sm:w-auto"
               onClick={() => setIsLeaveModalOpen(true)}
             >
               Leave Company
@@ -111,12 +155,39 @@ export const UpdateCompanyForm = ({
           </div>
         )}
 
-        <div className="flex items-center gap-6 border-b pb-6">
-          <CustomAvatar imageUrl={logoUrl} fallbackText={name || "?"} size="lg" />
-          <div>
-            <h3 className="text-xl font-bold">{name || "Company Name"}</h3>
-            <p className="text-muted-foreground text-sm">Preview of your brand identity</p>
-          </div>
+        <div className="flex flex-col gap-6 border-b pb-6">
+          {isReadOnly ? (
+            <div className="flex items-center gap-6">
+              <CustomAvatar imageUrl={logoUrl} fallbackText={name || "?"} size="lg" />
+              <div>
+                <h3 className="text-xl font-bold">{name || "Company Name"}</h3>
+                <p className="text-muted-foreground text-sm">Preview of brand identity</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <ImageUpload
+                currentImageUrl={logoUrl}
+                name={name}
+                onFileSelectAction={(file) => {
+                  if (file && file.size > 5 * 1024 * 1024) {
+                    toast.error("File is too large. Maximum size is 5 MB.");
+                    return;
+                  }
+                  setSelectedFile(file);
+                  setHasLogoChanged(true);
+                }}
+                onRemoveAction={() => {
+                  setValue("logoUrl", "");
+                  setHasLogoChanged(true);
+                }}
+              />
+              <div>
+                <h3 className="text-xl font-bold">{name || "Company Name"}</h3>
+                <p className="text-muted-foreground text-sm">Preview of your brand identity</p>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -141,7 +212,7 @@ export const UpdateCompanyForm = ({
             </select>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 sm:col-span-2">
             <label className="text-sm font-medium">Website URL</label>
             <Input
               {...register("websiteUrl")}
@@ -152,16 +223,6 @@ export const UpdateCompanyForm = ({
             {errors.websiteUrl && (
               <p className="text-destructive text-xs">{errors.websiteUrl.message}</p>
             )}
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Logo URL</label>
-            <Input
-              {...register("logoUrl")}
-              disabled={isReadOnly}
-              className="h-11"
-              placeholder="https://..."
-            />
           </div>
         </div>
 
