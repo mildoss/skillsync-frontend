@@ -3,7 +3,6 @@ import * as z from "zod";
 const nullableUrlField = z
   .string()
   .nullable()
-  .optional()
   .transform((val) => {
     if (val === "" || val === undefined) return null;
     return val;
