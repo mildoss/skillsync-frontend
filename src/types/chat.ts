@@ -20,6 +20,7 @@ export type ChatRoom = {
   vacancy: {
     title: string;
     company: {
+      id: string;
       name: string;
       logoUrl: string | null;
     };
