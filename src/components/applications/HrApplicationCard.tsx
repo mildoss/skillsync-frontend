@@ -91,7 +91,7 @@ export const HrApplicationCard = ({ application }: { application: Application })
               href={`/candidates/${applicant.id}`}
               className="hover:text-primary transition-colors"
             >
-              <h3 className="text-lg leading-tight font-bold">{applicant.name}</h3>
+              <h3 className="text-lg leading-tight font-bold">{applicant.name} {applicant.surname}</h3>
             </Link>
             <p className="text-muted-foreground text-sm font-medium">{applicant.position}</p>
           </div>
