@@ -49,6 +49,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
       } else {
         return {
           name: chat.applicant.name,
+          surname: chat.applicant.surname,
           avatar: chat.applicant.avatarUrl,
           subtitle: chat.vacancy.title,
           status: chat.status,
@@ -143,7 +144,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
 
                 <div className="min-w-0 flex-1">
                   <div className="mb-1.5 flex items-baseline justify-between gap-2">
-                    <h3 className="text-foreground truncate text-sm font-bold">{info.name}</h3>
+                    <h3 className="text-foreground truncate text-sm font-bold">{info.name} {info.surname}</h3>
                     {lastMessage && (
                       <span className="text-muted-foreground shrink-0 text-[10px] font-medium tracking-wider whitespace-nowrap uppercase">
                         {formatChatTime(new Date(lastMessage.createdAt))}
@@ -205,7 +206,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
 
                   <div className="min-w-0">
                     <h3 className="text-foreground truncate text-sm leading-tight font-bold">
-                      {activeChatInfo?.name}
+                      {activeChatInfo?.name} {activeChatInfo?.surname}
                     </h3>
 
                     <p className="text-muted-foreground truncate text-xs font-medium">

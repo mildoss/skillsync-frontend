@@ -8,7 +8,7 @@ export type Message = {
   applicationId: string;
   isRead: boolean;
   createdAt: string;
-  sender: Pick<User, "id" | "name" | "avatarUrl" | "position">;
+  sender: Pick<User, "id" | "name" | "surname" | "avatarUrl" | "position">;
 }
 
 export type ChatRoom = {
@@ -28,6 +28,7 @@ export type ChatRoom = {
   applicant: {
     id: string;
     name: string;
+    surname: string;
     avatarUrl: string | null;
   };
   messages: Message[];
