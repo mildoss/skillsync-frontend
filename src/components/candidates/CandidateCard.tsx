@@ -28,7 +28,7 @@ export const CandidateCard = ({ candidate }: CandidateCardProps) => {
               {candidate.position || "Position not specified"}
             </h2>
             <div className="mt-1 flex items-center gap-2">
-              <p className="text-muted-foreground text-sm font-medium">{candidate.name}</p>
+              <p className="text-muted-foreground text-sm font-medium">{candidate.name} {candidate.surname}</p>
             </div>
           </div>
         </div>

@@ -39,7 +39,7 @@ export default async function CandidatePage({ params }: CandidatePageProps) {
 
       <PageHeader
         title={candidate.position || "Position not specified"}
-        subtitle={candidate.name}
+        subtitle={`${candidate.name} ${candidate.surname}`}
         imageUrl={candidate.avatarUrl}
         fallbackLetter={candidate.name[0]}
         badges={[candidate.category?.name, candidate.location]}
