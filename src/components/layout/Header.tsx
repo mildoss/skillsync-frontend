@@ -71,10 +71,10 @@ export const Header = ({ user, unreadCount = 0 }: { user: User | null; unreadCou
               <div className="flex items-center gap-4">
                 <Link
                   href="/profile"
-                  className="hover:bg-muted flex items-center gap-3 rounded-full py-1 pr-4 pl-1 transition-colors"
+                  className="hover:bg-muted flex items-center gap-3 rounded-full py-1 pl-1 transition-colors"
                 >
                   <CustomAvatar imageUrl={user.avatarUrl} fallbackText={user.name} size="sm" />
-                  <span className="text-sm font-semibold">{user.name}</span>
+                  <span className="text-sm font-semibold max-w-25 truncate">{user.name}</span>
                 </Link>
 
                 <LogoutButton

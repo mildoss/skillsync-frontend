@@ -57,7 +57,7 @@ export const MobileHeaderMenu = ({ user }: { user: User | null }) => {
                 <div className="flex items-center gap-3 rounded-xl border p-4">
                   <CustomAvatar imageUrl={user.avatarUrl} fallbackText={user.name} size="md" />
                   <div className="flex flex-col">
-                    <span className="font-bold">{user.name}</span>
+                    <span className="font-bold max-w-60 truncate">{user.name}</span>
                     <span className="text-muted-foreground text-xs">{user.position || "User"}</span>
                   </div>
                 </div>
