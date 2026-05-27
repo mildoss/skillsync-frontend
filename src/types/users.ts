@@ -10,6 +10,7 @@ export type UsersResponse = {
 export type User = {
   id: string;
   name: string;
+  surname?: string;
   email: string;
   role: "APPLICANT" | "EMPLOYER";
   companyId: string | null;

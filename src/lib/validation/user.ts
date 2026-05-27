@@ -29,6 +29,7 @@ const aboutSchema = z
 
 export const updateEmployerProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  surname: z.string().optional(),
   position: z.string().optional(),
   about: z.string().optional(),
   avatarUrl: nullableUrlField,
@@ -36,6 +37,7 @@ export const updateEmployerProfileSchema = z.object({
 
 export const updateApplicantProfileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  surname: z.string().optional(),
   position: z.string().min(2, "Position must be at least 2 characters"),
   categoryId: z.string().min(1, "Please select a category"),
   experience: numberOrEmpty,

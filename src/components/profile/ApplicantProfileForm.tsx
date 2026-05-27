@@ -64,6 +64,7 @@ export const ApplicantProfileForm = ({
 
   const avatarUrl = watch("avatarUrl");
   const name = watch("name");
+  const surname = watch("surname");
   const position = watch("position");
 
   const onSubmit = (data: UpdateApplicantProfileInput) => {
@@ -145,16 +146,21 @@ export const ApplicantProfileForm = ({
           />
 
           <div>
-            <h3 className="text-xl font-bold">{name || "Your Name"}</h3>
-            <p className="text-muted-foreground font-medium">{position || "Your Profession"}</p>
+            <h3 className="text-xl font-bold truncate">{name || "Name"} {surname || "Surname"}</h3>
+            <p className="text-muted-foreground font-medium truncate">{position || "Profession"}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-sm font-medium">Full Name *</label>
-            <Input placeholder="John Doe" {...register("name")} className="h-11" />
+            <label className="text-sm font-medium">Name *</label>
+            <Input placeholder="John" {...register("name")} className="h-11" />
             {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Surname</label>
+            <Input placeholder="Doe" {...register("surname")} className="h-11" />
+            {errors.surname && <p className="text-destructive text-xs">{errors.surname.message}</p>}
           </div>
         </div>
       </div>
