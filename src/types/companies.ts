@@ -24,6 +24,7 @@ export type Companies = {
 export type Employee = {
   id: string;
   name: string;
+  surname?: string;
   position: string | null;
   avatarUrl: string | null;
 };
@@ -57,6 +58,7 @@ export type TeamRequest = {
   user: {
     id: string;
     name: string;
+    surname?: string;
     email: string;
     avatarUrl: string | null;
   };

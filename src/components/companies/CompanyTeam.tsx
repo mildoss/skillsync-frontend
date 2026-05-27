@@ -16,7 +16,7 @@ export const CompanyTeam = ({ employees }: { employees: Employee[] }) => {
               fallbackText={person.name}
               size="md"
             />
-            <p className="mt-2 line-clamp-1 text-sm font-semibold">{person.name}</p>
+            <p className="mt-2 line-clamp-1 text-sm font-semibold">{person.name} {person.surname}</p>
             {person.position && (
               <p className="text-muted-foreground line-clamp-1 text-xs">{person.position}</p>
             )}

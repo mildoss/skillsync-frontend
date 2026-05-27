@@ -52,7 +52,7 @@ export const TeamRequestsList = ({
           <div className="flex items-center gap-4">
             <CustomAvatar imageUrl={req.user.avatarUrl} fallbackText={req.user.name} size="md" />
             <div className="flex flex-col">
-              <span className="font-bold">{req.user.name}</span>
+              <span className="font-bold">{req.user.name} {req.user.surname}</span>
               <span className="text-muted-foreground text-sm">{req.user.email}</span>
               <span className="text-muted-foreground mt-1 text-xs">
                 Requested on {new Date(req.createdAt).toLocaleDateString()}

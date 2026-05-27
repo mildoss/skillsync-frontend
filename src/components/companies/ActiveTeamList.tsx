@@ -9,7 +9,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 
-type Employee = { id: string; name: string; position: string | null; avatarUrl: string | null };
+type Employee = { id: string; name: string; surname?: string; position: string | null; avatarUrl: string | null };
 
 export const ActiveTeamList = ({
   employees,
@@ -46,7 +46,7 @@ export const ActiveTeamList = ({
             <div className="flex items-center gap-4">
               <CustomAvatar imageUrl={emp.avatarUrl} fallbackText={emp.name} size="md" />
               <div className="flex flex-col">
-                <span className="font-bold">{emp.name}</span>
+                <span className="font-bold">{emp.name} {emp.surname}</span>
                 <span className="text-muted-foreground text-sm">{emp.position || "Recruiter"}</span>
               </div>
             </div>
@@ -67,7 +67,7 @@ export const ActiveTeamList = ({
       <ConfirmModal
         isOpen={!!employeeToRemove}
         title="Remove Recruiter"
-        description={`Are you sure you want to remove ${employeeToRemove?.name} from your company? They will lose access to all company vacancies and settings.`}
+        description={`Are you sure you want to remove ${employeeToRemove?.name} ${employeeToRemove?.surname} from your company? They will lose access to all company vacancies and settings.`}
         onCancelAction={() => setEmployeeToRemove(null)}
         onConfirmAction={handleConfirmRemove}
         isPending={isPending}
