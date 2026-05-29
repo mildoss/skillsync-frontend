@@ -4,16 +4,19 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { Message } from "@/types/chat";
 import { getAuthToken } from "@/actions/chat";
+import { ApplicationStatus } from "@/types/application";
 
 type UseChatSocketProps = {
   user: { id: string; name: string; avatarUrl: string | null };
   applicationId: string;
   initialMessages: Message[];
-}
+  initialStatus: ApplicationStatus;
+};
 
-export const useChatSocket = ({ user, applicationId, initialMessages }: UseChatSocketProps) => {
+export const useChatSocket = ({ user, applicationId, initialMessages, initialStatus }: UseChatSocketProps) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isConnected, setIsConnected] = useState(false);
+  const [chatStatus, setChatStatus] = useState(initialStatus);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -61,6 +64,13 @@ export const useChatSocket = ({ user, applicationId, initialMessages }: UseChatS
           ));
         }
       });
+
+      socket.on("applicationStatusChanged",(data: { applicationId: string; newStatus: ApplicationStatus }) => {
+          if (data.applicationId === applicationId) {
+            setChatStatus(data.newStatus);
+          }
+        },
+      );
     }
 
     void initSocket();
@@ -113,6 +123,7 @@ export const useChatSocket = ({ user, applicationId, initialMessages }: UseChatS
     setMessages,
     isConnected,
     sendMessage,
-    markAsRead
+    markAsRead,
+    chatStatus
   };
 };

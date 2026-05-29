@@ -7,6 +7,7 @@ export type Message = {
   senderId: string;
   applicationId: string;
   isRead: boolean;
+  isSystem?: boolean;
   createdAt: string;
   sender: Pick<User, "id" | "name" | "surname" | "avatarUrl" | "position">;
 }

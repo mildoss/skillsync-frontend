@@ -229,6 +229,7 @@ export const ChatLayout = ({ initialChats, currentUser }: ChatLayoutProps) => {
                   applicationId={activeChat.id}
                   currentUser={currentUser}
                   initialMessages={chatMessages}
+                  initialStatus={activeChat.status}
                   onMessagesRead={() => setReadTrigger((prev) => prev + 1)}
                 />
               )}

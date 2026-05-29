@@ -8,25 +8,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, ChevronUp, Loader2 } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
+import { ApplicationStatus } from "@/types/application";
 
 interface ChatWindowProps {
   initialMessages: Message[];
   applicationId: string;
-  currentUser: { id: string; name: string; avatarUrl: string | null };
+  currentUser: { id: string; name: string; role: "APPLICANT" | "EMPLOYER", avatarUrl: string | null };
+  initialStatus: ApplicationStatus;
   onMessagesRead?: () => void;
 }
 
-export const ChatWindow = ({ initialMessages, applicationId, currentUser, onMessagesRead }: ChatWindowProps) => {
+export const ChatWindow = ({ initialMessages, applicationId, currentUser, onMessagesRead, initialStatus }: ChatWindowProps) => {
   const [inputText, setInputText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const processedMessages = useRef(new Set<string>());
 
-  const { messages, sendMessage, isConnected, markAsRead } = useChatSocket({
+  const { messages, sendMessage, isConnected, markAsRead, chatStatus } = useChatSocket({
     user: currentUser,
     applicationId,
     initialMessages,
+    initialStatus,
   });
+
+  const isApplicant = currentUser.role === "APPLICANT";
+  const isPending = chatStatus === "PENDING";
+  const isRejected = chatStatus === "REJECTED";
+  const isInputBlocked = (isApplicant && isPending) || isRejected;
 
   const scrollToBottom = (smooth = true) => {
     if (scrollRef.current) {
@@ -144,6 +152,15 @@ export const ChatWindow = ({ initialMessages, applicationId, currentUser, onMess
         )}
 
         {messages.map((msg) => {
+          if (msg.isSystem) {
+            return (
+              <div key={msg.id} className="animate-in fade-in my-6 flex justify-center">
+                <span className="bg-muted text-muted-foreground rounded-full px-4 py-1.5 text-center text-[10px] font-bold tracking-wider uppercase shadow-sm">
+                  {msg.text}
+                </span>
+              </div>
+            );
+          }
           const isMe = msg.senderId === currentUser.id;
           const isOptimistic = msg.id.startsWith("temp-");
 
@@ -216,24 +233,36 @@ export const ChatWindow = ({ initialMessages, applicationId, currentUser, onMess
         </div>
       )}
 
-      <form onSubmit={handleSend} className="bg-card flex shrink-0 gap-2 border-t p-4">
-        <Input
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder={isConnected ? "Type your message..." : "Connecting..."}
-          disabled={!isConnected}
-          className="bg-muted/50 flex-1 rounded-full border-none focus-visible:ring-1 disabled:opacity-50"
-          autoComplete="off"
-        />
-        <Button
-          type="submit"
-          size="icon"
-          className="shrink-0 rounded-full"
-          disabled={!inputText.trim() || !isConnected}
-        >
-          <Send className="size-4" />
-        </Button>
-      </form>
+      <div className="bg-card shrink-0 border-t p-4">
+        {isRejected ? (
+          <div className="bg-destructive/10 border-destructive/20 text-destructive rounded-xl border px-4 py-3 text-center text-sm font-medium">
+            Discussion closed. The recruiter has rejected this application.
+          </div>
+        ) : isApplicant && isPending ? (
+          <div className="bg-muted text-muted-foreground rounded-xl border px-4 py-3 text-center text-sm font-medium">
+            You will be able to send messages once the recruiter accepts your application.
+          </div>
+        ) : (
+          <form onSubmit={handleSend} className="flex gap-2">
+            <Input
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder={isConnected ? "Type your message..." : "Connecting..."}
+              disabled={!isConnected || isInputBlocked}
+              className="bg-muted/50 flex-1 rounded-full border-none focus-visible:ring-1 disabled:opacity-50"
+              autoComplete="off"
+            />
+            <Button
+              type="submit"
+              size="icon"
+              className="shrink-0 rounded-full"
+              disabled={!inputText.trim() || !isConnected || isInputBlocked}
+            >
+              <Send className="size-4" />
+            </Button>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
