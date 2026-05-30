@@ -46,7 +46,7 @@ export async function registerAction(values: RegisterInput) {
     const data = await res.json();
 
     if (!res.ok) {
-      return { error: data.message || "Registration error" };
+      return { error: data.error || "Registration error" };
     }
 
     await setAuthCookies(data);
@@ -68,7 +68,7 @@ export async function loginAction(values: LoginInput) {
     const data = await res.json();
 
     if (!res.ok) {
-      return { error: data.message || "Login error" };
+      return { error: data.error || "Login error" };
     }
 
     await setAuthCookies(data);
