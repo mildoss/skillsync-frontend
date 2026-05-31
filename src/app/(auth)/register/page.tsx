@@ -27,7 +27,6 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       role: "APPLICANT",
-      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -85,11 +84,6 @@ export default function RegisterPage() {
             <Briefcase className={cn("mx-auto mb-2 size-6", selectedRole === "EMPLOYER" ? "text-primary" : "text-muted-foreground")} />
             <p className="text-sm font-semibold">I&apos;m hiring</p>
           </div>
-        </div>
-
-        <div className="space-y-1">
-          <Input placeholder="Username" {...register("username")} className="h-11" />
-          {errors.username && <p className="text-destructive text-xs">{errors.username.message}</p>}
         </div>
 
         <div className="space-y-1">

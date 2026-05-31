@@ -11,7 +11,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   role: z.enum(["APPLICANT", "EMPLOYER"]),
-  username: z.string().min(3, "The username is too short"),
   email: emailSchema,
   password: z.string().min(6, "The password must be at least 6 characters long."),
   confirmPassword: z.string().min(6, "Confirm your password"),
