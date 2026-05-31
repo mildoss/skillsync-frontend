@@ -139,7 +139,11 @@ For issues, questions, or contributions, please open an issue on the GitHub repo
 
 This is the frontend client for the SkillSync platform ecosystem. Other microservices include:
 
-- [SkillSync Backend - Core Service](#)
-- [SkillSync Backend - Payment Service](#)
-- [SkillSync Backend - AI Service](#)
-- [SkillSync Backend - Auth Service](#)
+- [SkillSync Backend - Core Service](https://github.com/mildoss/skillsync-backend)
+- [SkillSync Backend - Payment Service](https://github.com/mildoss/skillsync-backend-payment)
+- [SkillSync Backend - AI Service](https://github.com/mildoss/skillsync-backend-ai)
+- [SkillSync Backend - Auth Service](https://github.com/Eugene-Stellar/SkillSync-auth-service)
+
+---
+
+*Last Updated: 2026-05-31*
