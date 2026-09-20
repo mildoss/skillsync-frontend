@@ -4,6 +4,7 @@
   "description": "Modern web client for SkillSync Job Board Platform with real-time features and AI-powered tools",
   "author": "Vladislav Maslo",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",

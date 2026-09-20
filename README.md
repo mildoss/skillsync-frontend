@@ -129,7 +129,7 @@ Contributions are welcome! Please follow these guidelines:
 
 ## License
 
-This project is UNLICENSED — see the `package.json` file for details.
+This project is licensed under the [MIT License](LICENCE).
 
 ## Support
 
@@ -139,6 +139,7 @@ For issues, questions, or contributions, please open an issue on the GitHub repo
 
 This is the frontend client for the SkillSync platform ecosystem. Other microservices include:
 
+- [SkillSync Mobile](https://github.com/mildoss/skillsync-mobile)
 - [SkillSync Backend - Core Service](https://github.com/mildoss/skillsync-backend)
 - [SkillSync Backend - Payment Service](https://github.com/mildoss/skillsync-backend-payment)
 - [SkillSync Backend - AI Service](https://github.com/mildoss/skillsync-backend-ai)
@@ -146,4 +147,4 @@ This is the frontend client for the SkillSync platform ecosystem. Other microser
 
 ---
 
-*Last Updated: 2026-05-31*
+*Last Updated: 2026-09-20*
